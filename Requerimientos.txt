@@ -1,0 +1,6 @@
+1.- Gestion de aceites.
+2.- Gestion de filtros.
+3.- Gestion de Productos
+4.- Gestion de compras
+5.- Gestion de ventas 
+6.- Gestionar categorias
