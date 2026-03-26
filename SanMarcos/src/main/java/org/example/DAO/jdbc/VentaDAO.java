@@ -38,7 +38,7 @@ public class VentaDAO {
                 insertarDetalleVenta(conn, detalle);
 
                 // Actualizar stock (restar)
-                productoDAO.actualizarStock(detalle.getIdProducto(), -detalle.getCantidad());
+                actualizarStockEnTransaccion(conn, detalle.getIdProducto(), -detalle.getCantidad());
 
                 total += detalle.getCantidad() * detalle.getPrecioVenta();
             }
@@ -55,7 +55,19 @@ public class VentaDAO {
             try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
             return false;
         } finally {
-            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException e) {}
+                conexion.closeConnection(conn);
+            }
+        }
+    }
+
+    private void actualizarStockEnTransaccion(Connection conn, int idProducto, float cantidad) throws SQLException {
+        String sql = "UPDATE Producto SET Stock = Stock + ? WHERE Id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setFloat(1, cantidad);
+            pstmt.setInt(2, idProducto);
+            pstmt.executeUpdate();
         }
     }
 

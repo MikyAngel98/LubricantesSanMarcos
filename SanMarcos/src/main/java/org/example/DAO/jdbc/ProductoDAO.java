@@ -18,27 +18,33 @@ public class ProductoDAO {
         String sql = "INSERT INTO Producto (Nombre, Precio, Stock, Detalle, IdCategoria, IdMarca) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = conexion.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        Connection conn = null;
+        try {
+            conn = conexion.getConnection();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setString(1, producto.getNombre());
-            pstmt.setFloat(2, producto.getPrecio());
-            pstmt.setFloat(3, producto.getStock());
-            pstmt.setString(4, producto.getDetalle());
-            pstmt.setInt(5, producto.getIdCategoria());
-            pstmt.setInt(6, producto.getIdMarca());
+                pstmt.setString(1, producto.getNombre());
+                pstmt.setFloat(2, producto.getPrecio());
+                pstmt.setFloat(3, producto.getStock());
+                pstmt.setString(4, producto.getDetalle());
+                pstmt.setInt(5, producto.getIdCategoria());
+                pstmt.setInt(6, producto.getIdMarca());
 
-            int filas = pstmt.executeUpdate();
-            if (filas > 0) {
-                ResultSet rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    producto.setId(rs.getInt(1));
+                int filas = pstmt.executeUpdate();
+                if (filas > 0) {
+                    ResultSet rs = pstmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        producto.setId(rs.getInt(1));
+                    }
+                    return true;
                 }
-                return true;
             }
-
         } catch (SQLException e) {
             System.err.println("Error al insertar producto: " + e.getMessage());
+        } finally {
+            if (conn != null) {
+                conexion.closeConnection(conn);
+            }
         }
         return false;
     }
