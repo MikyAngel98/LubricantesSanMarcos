@@ -24,6 +24,6 @@ public class Presentacion {
 
     @Override
     public String toString() {
-        return Nombre + " (" + Litros + ")";
+        return Nombre + " - " + Litros;
     }
 }

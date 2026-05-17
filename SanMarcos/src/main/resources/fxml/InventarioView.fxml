@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.controllers.InventarioController"
+      spacing="15" styleClass="inventario-container" stylesheets="@../css/inventario.css">
+
+    <Label text="📦 INVENTARIO DE PRODUCTOS" styleClass="titulo"/>
+
+    <HBox spacing="10">
+        <Button text="➕ NUEVO PRODUCTO" onAction="#abrirNuevoProducto" styleClass="btn-nuevo"/>
+        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtBuscar" promptText="🔍 Buscar producto..." styleClass="buscador"/>
+    </HBox>
+
+    <TableView fx:id="tablaProductos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Producto" prefWidth="200"/>
+            <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="100"/>
+            <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
+            <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+            <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="100"/>
+            <TableColumn fx:id="colDetalle" text="Detalle" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10">
+        <Label fx:id="lblTotalProductos" text="Total productos: 0" styleClass="estado"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblBajoStock" text="⚠️ Productos bajo stock: 0" styleClass="estado-warning"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,111 @@
+/* nuevo-producto.css - Estilos suaves */
+
+.form-container {
+    -fx-padding: 12;
+    -fx-background-color: #ebf5fb;
+}
+
+.form-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 5 0;
+}
+
+.subtitle {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5dade2;
+    -fx-padding: 5 0 2 0;
+}
+
+.label-categoria {
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+    -fx-padding: 3 0;
+}
+
+.label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a5568;
+    -fx-font-size: 12px;
+}
+
+.text-field, .text-area, .combo-box {
+    -fx-pref-height: 28px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+    -fx-background-color: white;
+}
+
+.text-area {
+    -fx-pref-height: 45px;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #5dade2;
+    -fx-border-width: 1.5;
+}
+
+.btn-guardar {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5 20;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.btn-guardar:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.btn-cancelar {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 5 20;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.btn-cancelar:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-nueva {
+    -fx-background-color: #5dade2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 3 10;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-font-size: 11px;
+}
+
+.btn-nueva:hover {
+    -fx-background-color: #3498db;
+}
+
+.radio-button {
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+    -fx-text-fill: #4a5568;
+}
+
+.separator {
+    -fx-padding: 5 0;
+}
+
+.scroll-pane {
+    -fx-background-color: #ebf5fb;
+    -fx-background: #ebf5fb;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: #ebf5fb;
+}

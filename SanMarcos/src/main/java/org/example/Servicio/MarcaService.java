@@ -68,4 +68,12 @@ public class MarcaService {
         }
         return marcaDAO.buscarPorNombre(nombre);
     }
+
+    // Para validaciones rápidas
+    public boolean existePorNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return false;
+        }
+        return !marcaDAO.buscarPorNombre(nombre).isEmpty();
+    }
 }

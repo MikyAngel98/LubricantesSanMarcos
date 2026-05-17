@@ -155,9 +155,7 @@ public class ProductoService {
         if (producto.getStock() < 0) {
             throw new IllegalArgumentException("El stock no puede ser negativo");
         }
-        if (producto.getIdCategoria() <= 0) {
-            throw new IllegalArgumentException("Debe seleccionar una categoría");
-        }
+
         if (producto.getIdMarca() <= 0) {
             throw new IllegalArgumentException("Debe seleccionar una marca");
         }
@@ -194,5 +192,13 @@ public class ProductoService {
         if (foco.getCodigo() == null || foco.getCodigo().trim().isEmpty()) {
             throw new IllegalArgumentException("El código es obligatorio");
         }
+    }
+
+    public List<Aceite> listarAceites() {
+        return productoDAO.obtenerAceites();
+    }
+
+    public List<Filtro> listarFiltros() {
+        return productoDAO.obtenerFiltros();
     }
 }

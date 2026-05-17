@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.Vista.controllers.NuevoProductoController"
+            fitToWidth="true"
+            stylesheets="@../css/nuevo-producto.css">
+
+    <VBox spacing="8" style="-fx-padding: 12; -fx-background-color: #ecf0f1;">
+
+        <fx:define>
+            <ToggleGroup fx:id="categoriaGrupo"/>
+            <ToggleGroup fx:id="agranelGrupo"/>
+        </fx:define>
+
+        <!-- RadioButtons horizontales -->
+        <HBox spacing="20">
+            <RadioButton text="PRODUCTO" fx:id="rbProducto" toggleGroup="$categoriaGrupo" selected="true"/>
+            <RadioButton text="ACEITE" fx:id="rbAceite" toggleGroup="$categoriaGrupo"/>
+            <RadioButton text="FILTRO" fx:id="rbFiltro" toggleGroup="$categoriaGrupo"/>
+            <RadioButton text="FOCO" fx:id="rbFoco" toggleGroup="$categoriaGrupo"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Dos columnas -->
+        <HBox spacing="20" alignment="TOP_LEFT">
+            <!-- COLUMNA IZQUIERDA -->
+            <VBox spacing="6" prefWidth="400">
+                <Label text="NOMBRE:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtNombre" prefWidth="300"/>
+
+                <Label text="PRECIO (Bs):" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtPrecio" prefWidth="150"/>
+
+                <Label text="STOCK:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtStock" prefWidth="150"/>
+
+                <Label text="MARCA:" style="-fx-font-weight: bold;"/>
+                <HBox spacing="5">
+                    <ComboBox fx:id="cbMarca" prefWidth="250" editable="true"/>
+                    <Button fx:id="btnNuevaMarca" text="+ NUEVO"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                </HBox>
+
+
+
+                <Separator/>
+
+                <!-- Campos de ACEITE -->
+                <Label text="VISCOSIDAD:" fx:id="lblViscosidad" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="cbViscosidad" prefWidth="300" editable="false" disable="true"/>
+
+                <Label text="TIPO ACEITE:" fx:id="lblTipoAceite" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="cbTipoAceite" prefWidth="300" editable="false" disable="true"/>
+
+                <Label text="PRESENTACIÓN:" fx:id="lblPresentacion" style="-fx-font-weight: bold;"/>
+                <HBox spacing="5">
+                    <ComboBox fx:id="cbPresentacion" prefWidth="300" editable="false" disable="true"/>
+                </HBox>
+
+                <Label text="¿ES A GRANEL?:" fx:id="lblAgranel" style="-fx-font-weight: bold;"/>
+                <HBox spacing="15">
+                    <RadioButton text="SI" fx:id="rbAgranelSi" toggleGroup="$agranelGrupo"/>
+                    <RadioButton text="NO" fx:id="rbAgranelNo" toggleGroup="$agranelGrupo" selected="true"/>
+                </HBox>
+            </VBox>
+
+            <!-- COLUMNA DERECHA -->
+            <VBox spacing="6" prefWidth="400">
+
+                <Label text="DETALLES:" style="-fx-font-weight: bold;"/>
+                <TextArea fx:id="txtDetalle" prefHeight="50" prefWidth="350"/>
+
+                <Label text="CÓDIGO:" fx:id="lblCodigo" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtCodigo" prefWidth="200" disable="true"/>
+
+                <Label text="USO:" fx:id="lblUso" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtUso" prefWidth="200" disable="true"/>
+
+                <Label text="ROSCA:" fx:id="lblRosca" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtRosca" prefWidth="200" disable="true"/>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Botones -->
+        <HBox spacing="15" alignment="CENTER">
+            <Button text="GUARDAR" onAction="#guardarProducto"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5 20; -fx-cursor: hand;"/>
+            <Button text="CANCELAR" onAction="#cancelar"
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5 20; -fx-cursor: hand;"/>
+        </HBox>
+
+    </VBox>
+</ScrollPane>

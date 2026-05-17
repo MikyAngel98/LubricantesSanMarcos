@@ -90,9 +90,10 @@ public class VentaDAO {
                 venta.setIdCliente(rs.getInt("IdCliente"));
                 if (rs.wasNull()) venta.setIdCliente(null);
 
-                // Cargar detalles
-                venta.setDetalles(obtenerDetallesPorVenta(conn, id));
+                // ← AGREGAR ESTO
+                venta.setMetodoPago(rs.getString("MetodoPago"));
 
+                venta.setDetalles(obtenerDetallesPorVenta(conn, id));
                 return Optional.of(venta);
             }
 
@@ -117,6 +118,9 @@ public class VentaDAO {
                 venta.setTotal(rs.getFloat("Total"));
                 venta.setIdCliente(rs.getInt("IdCliente"));
                 if (rs.wasNull()) venta.setIdCliente(null);
+
+                // ← AGREGAR ESTO
+                venta.setMetodoPago(rs.getString("MetodoPago"));
 
                 venta.setDetalles(obtenerDetallesPorVenta(conn, venta.getId()));
                 ventas.add(venta);
@@ -146,6 +150,9 @@ public class VentaDAO {
                 venta.setTotal(rs.getFloat("Total"));
                 venta.setIdCliente(rs.getInt("IdCliente"));
                 if (rs.wasNull()) venta.setIdCliente(null);
+
+                // ← AGREGAR ESTO
+                venta.setMetodoPago(rs.getString("MetodoPago"));
 
                 venta.setDetalles(obtenerDetallesPorVenta(conn, venta.getId()));
                 ventas.add(venta);
@@ -202,7 +209,7 @@ public class VentaDAO {
     // ==================== MÉTODOS PRIVADOS ====================
 
     private int insertarVenta(Connection conn, Venta venta) throws SQLException {
-        String sql = "INSERT INTO Venta (Fecha, Total, IdCliente) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Venta (Fecha, Total, IdCliente, MetodoPago) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setDate(1, Date.valueOf(venta.getFecha() != null ? venta.getFecha() : LocalDate.now()));
@@ -212,6 +219,7 @@ public class VentaDAO {
             } else {
                 pstmt.setNull(3, Types.INTEGER);
             }
+            pstmt.setString(4, venta.getMetodoPago());
 
             pstmt.executeUpdate();
 

@@ -13,4 +13,9 @@ public class Filtro extends Producto {
     private String Codigo;
     private String Rosca;
     private String Uso;
+
+    private transient String marcaNombre;
+
+    public String getMarcaNombre() { return marcaNombre; }
+    public void setMarcaNombre(String marcaNombre) { this.marcaNombre = marcaNombre; }
 }

@@ -220,7 +220,11 @@ public class ProductoDAO {
 
     public List<Producto> obtenerTodos() {
         List<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM Producto ORDER BY Nombre";
+        String sql = "SELECT p.*, c.Nombre as CategoriaNombre, m.Nombre as MarcaNombre " +
+                "FROM Producto p " +
+                "INNER JOIN Categoria c ON p.IdCategoria = c.Id " +
+                "INNER JOIN Marca m ON p.IdMarca = m.Id " +
+                "ORDER BY p.Nombre";
 
         try (Connection conn = conexion.getConnection();
              Statement stmt = conn.createStatement();
@@ -235,6 +239,11 @@ public class ProductoDAO {
                 producto.setDetalle(rs.getString("Detalle"));
                 producto.setIdCategoria(rs.getInt("IdCategoria"));
                 producto.setIdMarca(rs.getInt("IdMarca"));
+
+                // Guardar nombres en atributos extras
+                producto.setCategoriaNombre(rs.getString("CategoriaNombre"));
+                producto.setMarcaNombre(rs.getString("MarcaNombre"));
+
                 productos.add(producto);
             }
 
@@ -500,6 +509,107 @@ public class ProductoDAO {
             System.err.println("Error al obtener filtro: " + e.getMessage());
         }
         return Optional.empty();
+    }
+
+    public List<Aceite> obtenerAceites() {
+        List<Aceite> aceites = new ArrayList<>();
+        String sql = "SELECT p.*, " +
+                "a.Viscosidad, " +
+                "a.TipoAceite, " +
+                "a.Uso, " +
+                "a.EsAgrenel, " +
+                "a.IdPresentacion, " +
+                "c.Nombre as CategoriaNombre, " +
+                "m.Nombre as MarcaNombre, " +
+                "CONCAT(pr.Nombre, ' (', pr.Litros, ')') as PresentacionNombre " +
+                "FROM Producto p " +
+                "INNER JOIN Aceite a ON p.Id = a.IdProducto " +
+                "INNER JOIN Categoria c ON p.IdCategoria = c.Id " +
+                "INNER JOIN Marca m ON p.IdMarca = m.Id " +
+                "LEFT JOIN Presentacion pr ON a.IdPresentacion = pr.Id " +
+                "ORDER BY p.Nombre";
+
+        try (Connection conn = conexion.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Aceite aceite = new Aceite();
+
+                // Datos de Producto
+                aceite.setId(rs.getInt("Id"));
+                aceite.setNombre(rs.getString("Nombre"));
+                aceite.setPrecio(rs.getFloat("Precio"));
+                aceite.setStock(rs.getFloat("Stock"));
+                aceite.setDetalle(rs.getString("Detalle"));
+                aceite.setIdCategoria(rs.getInt("IdCategoria"));
+                aceite.setIdMarca(rs.getInt("IdMarca"));
+
+                // Datos específicos de Aceite
+                aceite.setViscosidad(rs.getString("Viscosidad"));
+                aceite.setTipoAceite(rs.getString("TipoAceite"));
+                aceite.setUso(rs.getString("Uso"));
+                aceite.setEsAgranel(rs.getBoolean("EsAgrenel"));
+                aceite.setIdPresentacion(rs.getInt("IdPresentacion"));
+
+                // Nombres de relaciones (para mostrar en la tabla)
+                aceite.setMarcaNombre(rs.getString("MarcaNombre"));
+                aceite.setPresentacionNombre(rs.getString("PresentacionNombre"));
+
+                aceites.add(aceite);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener aceites: " + e.getMessage());
+        }
+        return aceites;
+    }
+
+    public List<Filtro> obtenerFiltros() {
+        List<Filtro> filtros = new ArrayList<>();
+        String sql = "SELECT p.*, " +
+                "f.Codigo, " +
+                "f.Rosca, " +
+                "f.Uso as FiltroUso, " +
+                "c.Nombre as CategoriaNombre, " +
+                "m.Nombre as MarcaNombre " +
+                "FROM Producto p " +
+                "INNER JOIN Filtro f ON p.Id = f.IdProducto " +
+                "INNER JOIN Categoria c ON p.IdCategoria = c.Id " +
+                "INNER JOIN Marca m ON p.IdMarca = m.Id " +
+                "ORDER BY p.Nombre";
+
+        try (Connection conn = conexion.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Filtro filtro = new Filtro();
+
+                // Datos de Producto
+                filtro.setId(rs.getInt("Id"));
+                filtro.setNombre(rs.getString("Nombre"));
+                filtro.setPrecio(rs.getFloat("Precio"));
+                filtro.setStock(rs.getFloat("Stock"));
+                filtro.setDetalle(rs.getString("Detalle"));
+                filtro.setIdCategoria(rs.getInt("IdCategoria"));
+                filtro.setIdMarca(rs.getInt("IdMarca"));
+
+                // Datos específicos de Filtro
+                filtro.setCodigo(rs.getString("Codigo"));
+                filtro.setRosca(rs.getString("Rosca"));
+                filtro.setUso(rs.getString("FiltroUso"));
+
+                // Nombres de relaciones
+                filtro.setMarcaNombre(rs.getString("MarcaNombre"));
+
+                filtros.add(filtro);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener filtros: " + e.getMessage());
+        }
+        return filtros;
     }
 
 }

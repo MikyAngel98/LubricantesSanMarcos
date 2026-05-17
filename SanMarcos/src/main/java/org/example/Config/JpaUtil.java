@@ -5,25 +5,24 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class JpaUtil {
-
-    private static final String PERSISTENCE_UNIT_NAME = "LubricantePU";
-    private static EntityManagerFactory factory;
+    private static final EntityManagerFactory emf;
 
     static {
         try {
-            factory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-        } catch (Exception e) {
-            e.printStackTrace();
+            emf = Persistence.createEntityManagerFactory("LubricantePU");
+        } catch (Throwable ex) {
+            System.err.println("Error al crear EntityManagerFactory: " + ex);
+            throw new ExceptionInInitializerError(ex);
         }
     }
 
     public static EntityManager getEntityManager() {
-        return factory.createEntityManager();
+        return emf.createEntityManager();
     }
 
     public static void close() {
-        if (factory != null && factory.isOpen()) {
-            factory.close();
+        if (emf != null && emf.isOpen()) {
+            emf.close();
         }
     }
 }

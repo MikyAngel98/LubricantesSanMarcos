@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.controllers.FiltroFormController"
+      spacing="15" styleClass="filtros-container" stylesheets="@../css/filtro-form.css">
+
+    <Label text="🔧 FILTROS EN INVENTARIO" styleClass="titulo"/>
+
+    <HBox spacing="10">
+        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtBuscar" promptText="🔍 Buscar filtro..." styleClass="buscador"/>
+    </HBox>
+
+    <TableView fx:id="tablaFiltros" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+            <TableColumn fx:id="colCodigo" text="Código" prefWidth="100"/>
+            <TableColumn fx:id="colRosca" text="Rosca" prefWidth="100"/>
+            <TableColumn fx:id="colUso" text="Uso" prefWidth="100"/>
+            <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
+            <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+            <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="100"/>
+            <TableColumn fx:id="colDetalle" text="Detalle" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="lblTotal" text="Total filtros: 0" styleClass="estado"/>
+
+</VBox>

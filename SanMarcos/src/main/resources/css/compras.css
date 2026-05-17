@@ -1,0 +1,146 @@
+/* compras.css - Estilos para el módulo de compras */
+
+/* Contenedor principal */
+.root {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Tablas */
+.table-view {
+    -fx-border-color: #e2e8f0;
+    -fx-background-color: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-padding: 5;
+}
+
+/* Selección de fila */
+.table-row-cell:selected {
+    -fx-background-color: #5dade2;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+/* Campos de texto */
+.text-field {
+    -fx-pref-height: 32px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.text-field:focused {
+    -fx-border-color: #5dade2;
+    -fx-border-width: 1.5;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-pref-height: 32px;
+}
+
+/* Botones */
+.button {
+    -fx-cursor: hand;
+}
+
+.button:pressed {
+    -fx-translate-y: 1px;
+}
+
+/* Botón de disminuir/aumentar */
+.btn-mas-menos {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-pref-width: 40;
+    -fx-cursor: hand;
+}
+
+/* Botón agregar */
+.btn-agregar {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+/* Botón quitar */
+.btn-quitar {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+
+/* Botón limpiar carrito */
+.btn-limpiar {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+
+/* Botón registrar compra */
+.btn-registrar {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+    -fx-cursor: hand;
+}
+
+/* Botón nuevo proveedor */
+.btn-nuevo {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+/* Etiqueta de total */
+.label-total {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.total-monto {
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #27ae60;
+}
+
+/* Campo de cantidad centrado */
+.cantidad-field {
+    -fx-alignment: CENTER;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+}
+
+/* Buscador */
+.buscador {
+    -fx-pref-height: 32px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+}
+
+/* Separador */
+.separator {
+    -fx-padding: 5 0;
+}

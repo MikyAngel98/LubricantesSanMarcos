@@ -23,4 +23,9 @@ public class Proveedor {
     @Column(length = 20)
     private String Empresa;
 
+    @Override
+    public String toString() {
+        return Empresa + " (" + persona.getNombreCompleto() + ")";
+    }
+
 }

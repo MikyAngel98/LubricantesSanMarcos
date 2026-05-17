@@ -1,0 +1,97 @@
+/* inventario.css - Estilos para el panel de inventario */
+
+.inventario-container {
+    -fx-padding: 20;
+    -fx-background-color: #ecf0f1;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.btn-nuevo {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-nuevo:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.btn-actualizar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-actualizar:hover {
+    -fx-background-color: #5dade2;
+}
+
+.buscador {
+    -fx-pref-width: 250;
+    -fx-pref-height: 32;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-padding: 5 10;
+}
+
+.buscador:focused {
+    -fx-border-color: #3498db;
+}
+
+/* Tabla - Líneas verticales */
+.table-view .column-header,
+.table-view .table-cell {
+    -fx-border-color: #bdc3c7;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-style: solid;
+}
+
+.table-view .table-cell:last-column,
+.table-view .column-header:last-column {
+    -fx-border-width: 0;
+}
+
+/* Tabla - Línea horizontal entre filas */
+.table-view .table-row-cell {
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Tabla - Centrar texto */
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+}
+
+.table-view .column-header .label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Encabezado */
+.table-view .column-header {
+    -fx-background-color: #34495e;
+}
+
+/* Estado */
+.estado {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.estado-warning {
+    -fx-font-size: 12px;
+    -fx-text-fill: #e67e22;
+    -fx-font-weight: bold;
+}

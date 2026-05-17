@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.controllers.AceiteFormController"
+      spacing="15" styleClass="aceites-container" stylesheets="@../css/aceite-form.css">
+
+    <Label text="🛢️ ACEITES EN INVENTARIO" styleClass="titulo"/>
+
+    <HBox spacing="10">
+        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtBuscar" promptText="🔍 Buscar aceite..." styleClass="buscador"/>
+    </HBox>
+
+    <TableView fx:id="tablaAceites" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="180"/>
+            <TableColumn fx:id="colViscosidad" text="Viscosidad" prefWidth="80"/>
+            <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
+            <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="90"/>
+            <TableColumn fx:id="colStock" text="Stock" prefWidth="70"/>
+            <TableColumn fx:id="colPresentacion" text="Presentación" prefWidth="100"/>
+            <TableColumn fx:id="colAgranel" text="A granel" prefWidth="70"/>
+            <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
+            <TableColumn fx:id="colUso" text="Uso" prefWidth="100"/>
+            <TableColumn fx:id="colDetalle" text="Detalle" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="lblTotal" text="Total aceites: 0" styleClass="estado"/>
+
+</VBox>

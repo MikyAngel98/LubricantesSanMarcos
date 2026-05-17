@@ -1,0 +1,56 @@
+/* filtros-form.css - Estilos para lista de filtros */
+
+.filtros-container {
+    -fx-padding: 20;
+    -fx-background-color: #ecf0f1;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.btn-actualizar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-actualizar:hover {
+    -fx-background-color: #5dade2;
+}
+
+.buscador {
+    -fx-pref-width: 250;
+    -fx-pref-height: 32;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-padding: 5 10;
+}
+
+.buscador:focused {
+    -fx-border-color: #3498db;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+}
+
+.table-view .column-header .label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+}
+
+.estado {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}

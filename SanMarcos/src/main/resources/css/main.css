@@ -1,0 +1,98 @@
+/* main.css - Estilos principales */
+
+/* Header */
+.header {
+    -fx-background-color: #1a5276;
+    -fx-text-fill: white;
+    -fx-padding: 15;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* Menú lateral */
+.menu-lateral {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 15 10;
+    -fx-spacing: 8;
+}
+
+/* ESTILO ÚNICO PARA TODOS LOS BOTONES */
+.btn-menu {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-padding: 12 10;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-pref-width: 240;
+    -fx-min-width: 240;
+    -fx-max-width: 240;
+}
+
+.btn-menu:hover {
+    -fx-background-color: #3498db;
+}
+
+/* Botón especial para NUEVO PRODUCTO */
+.btn-success {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-padding: 12 10;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-pref-width: 240;
+    -fx-min-width: 240;
+    -fx-max-width: 240;
+}
+
+.btn-success:hover {
+    -fx-background-color: #f39c12;
+}
+
+/* Botón config */
+.btn-config {
+    -fx-background-color: #7f8c8d;
+    -fx-text-fill: white;
+    -fx-padding: 12 10;
+    -fx-font-size: 15px;
+    -fx-cursor: hand;
+    -fx-background-radius: 5;
+    -fx-pref-width: 240;
+    -fx-min-width: 240;
+    -fx-max-width: 240;
+}
+
+/* Panel central */
+.panel-central {
+    -fx-background-color: #ecf0f1;
+    -fx-padding: 20;
+}
+
+.bienvenida {
+    -fx-font-size: 18px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Footer */
+.footer {
+    -fx-background-color: #34495e;
+    -fx-padding: 8 15;
+}
+
+.footer-texto {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+.footer-fecha {
+    -fx-text-fill: #bdc3c7;
+    -fx-font-size: 12px;
+}
+
+/* Separador */
+.separator {
+    -fx-padding: 5;
+}

@@ -17,4 +17,5 @@ public class Venta {
     private Float Total;
     private Integer IdCliente;  // Puede ser null
     private List<DetalleVenta> Detalles = new ArrayList<>();
+    private String MetodoPago;
 }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.controllers.VentasController"
+      spacing="10" styleClass="root"
+      stylesheets="@../css/ventas.css"
+      VBox.vgrow="ALWAYS">
+
+    <fx:define>
+        <ToggleGroup fx:id="pagoGrupo"/>
+    </fx:define>
+
+    <Label text="🛒 PUNTO DE VENTA" styleClass="titulo"/>
+
+    <Separator/>
+
+    <HBox spacing="20" alignment="TOP_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="CLIENTE (OPCIONAL):" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtClienteNombre" promptText="Nombre" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <TextField fx:id="txtClienteCelular" promptText="Celular" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="BUSCAR PRODUCTO:" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="txtBuscar" promptText="Escriba nombre..." styleClass="buscador"/>
+
+            <Label text="PRODUCTOS:" style="-fx-font-weight: bold;"/>
+
+            <TableView fx:id="tblProductos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNombre" text="Producto" prefWidth="200"/>
+                    <TableColumn fx:id="colMarca" text="Marca" prefWidth="120"/>
+                    <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="120"/>
+                    <TableColumn fx:id="colStock" text="Stock" prefWidth="70"/>
+                    <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="90"/>
+                </columns>
+            </TableView>
+
+            <Label text="CANTIDAD:" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="btnDisminuir" text="-" styleClass="btn-mas-menos"/>
+                <TextField fx:id="txtCantidad" text="1" prefWidth="60" styleClass="cantidad-field"/>
+                <Button fx:id="btnAumentar" text="+" styleClass="btn-mas-menos"/>
+                <Button fx:id="btnAgregar" text="➕ AGREGAR" styleClass="btn-agregar"/>
+            </HBox>
+
+            <Label fx:id="lblProductoSeleccionado" text="" style="-fx-text-fill: #7f8c8d;"/>
+        </VBox>
+
+        <!-- COLUMNA DERECHA -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS">
+            <Label text="CARRITO DE COMPRAS:" style="-fx-font-weight: bold;"/>
+
+            <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colCarritoProducto" text="Producto" prefWidth="180"/>
+                    <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="70"/>
+                    <TableColumn fx:id="colCarritoPrecio" text="Precio" prefWidth="80"/>
+                    <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="80"/>
+                </columns>
+            </TableView>
+
+            <HBox spacing="10">
+                <Button fx:id="btnQuitar" text="❌ QUITAR SELECCIONADO" styleClass="btn-quitar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button fx:id="btnLimpiarCarrito" text="🗑️ LIMPIAR TODO" styleClass="btn-limpiar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+
+            <Separator/>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label text="TOTAL:" styleClass="label-total"/>
+                <Label fx:id="lblTotal" text="Bs 0.00" styleClass="total-monto"/>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="MÉTODO DE PAGO:" style="-fx-font-weight: bold;"/>
+            <HBox spacing="15">
+                <RadioButton text="EFECTIVO" fx:id="rbEfectivo" toggleGroup="$pagoGrupo" selected="true"/>
+                <RadioButton text="QR" fx:id="rbQr" toggleGroup="$pagoGrupo"/>
+            </HBox>
+
+            <Button fx:id="btnFinalizar" text="💰 FINALIZAR VENTA" maxWidth="Infinity" styleClass="btn-finalizar"/>
+        </VBox>
+    </HBox>
+
+</VBox>
