@@ -19,6 +19,22 @@
     -fx-background-radius: 5;
     -fx-cursor: hand;
 }
+.btn-editar{
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-eliminar{
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
 
 .btn-nuevo:hover {
     -fx-background-color: #2ecc71;

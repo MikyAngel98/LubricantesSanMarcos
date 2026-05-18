@@ -10,6 +10,9 @@
     <Label text="🛢️ ACEITES EN INVENTARIO" styleClass="titulo"/>
 
     <HBox spacing="10">
+        <Button text="➕ NUEVO ACEITE" onAction="#abrirNuevoAceite" styleClass="btn-nuevo"/>
+        <Button text="✏️ EDITAR" onAction="#editarAceite" styleClass="btn-editar"/>
+        <Button text="🗑️ ELIMINAR" onAction="#eliminarAceite" styleClass="btn-eliminar"/>
         <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar aceite..." styleClass="buscador"/>

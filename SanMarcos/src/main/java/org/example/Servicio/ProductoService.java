@@ -67,6 +67,17 @@ public class ProductoService {
         return productoDAO.obtenerPorId(id);
     }
 
+    // ==================== LISTAR POR TIPO ====================
+
+    public List<Producto> listarProductosBase() {
+        return productoDAO.obtenerProductosBase();
+    }
+
+
+    public List<Foco> listarFocos() {
+        return productoDAO.obtenerFocos();
+    }
+
     public Optional<Aceite> buscarAceitePorId(int id) {
         if (id <= 0) {
             throw new IllegalArgumentException("ID inválido");
@@ -124,6 +135,75 @@ public class ProductoService {
         }
 
         return productoDAO.actualizarStock(idProducto, cantidad);
+    }
+
+    // ==================== ACTUALIZAR ACEITE ====================
+    public void actualizarAceite(Aceite aceite) {
+        // Validar campos
+        if (aceite.getNombre() == null || aceite.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (aceite.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0");
+        }
+        if (aceite.getIdMarca() <= 0) {
+            throw new IllegalArgumentException("Debe seleccionar una marca");
+        }
+        if (aceite.getIdCategoria() <= 0) {
+            throw new IllegalArgumentException("Categoría inválida");
+        }
+        if (aceite.getViscosidad() == null || aceite.getViscosidad().trim().isEmpty()) {
+            throw new IllegalArgumentException("La viscosidad es obligatoria");
+        }
+
+        // Actualizar en la base de datos
+        productoDAO.actualizarAceite(aceite);
+    }
+
+    // ==================== ACTUALIZAR FILTRO ====================
+    public void actualizarFiltro(Filtro filtro) {
+        // Validar campos
+        if (filtro.getNombre() == null || filtro.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (filtro.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0");
+        }
+        if (filtro.getIdMarca() <= 0) {
+            throw new IllegalArgumentException("Debe seleccionar una marca");
+        }
+        if (filtro.getIdCategoria() <= 0) {
+            throw new IllegalArgumentException("Categoría inválida");
+        }
+        if (filtro.getCodigo() == null || filtro.getCodigo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El código es obligatorio");
+        }
+
+        // Actualizar en la base de datos
+        productoDAO.actualizarFiltro(filtro);
+    }
+
+    // ==================== ACTUALIZAR FOCO ====================
+    public void actualizarFoco(Foco foco) {
+        // Validar campos
+        if (foco.getNombre() == null || foco.getNombre().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (foco.getPrecio() <= 0) {
+            throw new IllegalArgumentException("El precio debe ser mayor a 0");
+        }
+        if (foco.getIdMarca() <= 0) {
+            throw new IllegalArgumentException("Debe seleccionar una marca");
+        }
+        if (foco.getIdCategoria() <= 0) {
+            throw new IllegalArgumentException("Categoría inválida");
+        }
+        if (foco.getCodigo() == null || foco.getCodigo().trim().isEmpty()) {
+            throw new IllegalArgumentException("El código es obligatorio");
+        }
+
+        // Actualizar en la base de datos
+        productoDAO.actualizarFoco(foco);
     }
 
     // ==================== DELETE ====================

@@ -44,6 +44,8 @@ public class ComprasController {
     @FXML private Button btnAgregar;
     @FXML private Label lblProductoSeleccionado;
 
+    @FXML private ComboBox<String> cbCategoria;
+
     // Carrito
     @FXML private TableView<ItemCompra> tblCarrito;
     @FXML private TableColumn<ItemCompra, String> colCarritoProducto;
@@ -102,26 +104,45 @@ public class ComprasController {
     }
 
     private void configurarBusqueda() {
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                productosList.setAll(cacheProductos);
-                return;
-            }
-            List<Producto> filtrados = cacheProductos.stream()
-                    .filter(p -> p.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                    .toList();
-            productosList.setAll(filtrados);
-        });
+        cbCategoria.getItems().addAll("TODOS", "PRODUCTOS", "ACEITES", "FILTROS", "FOCOS");
+        cbCategoria.getSelectionModel().select("TODOS");
 
-        tblProductos.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                lblProductoSeleccionado.setText("Seleccionado: " + productoSeleccionado.getNombre() +
-                        " | Stock actual: " + productoSeleccionado.getStock());
-                txtCantidad.setText("1");
-                txtPrecioCompra.clear();
-            }
-        });
+        txtBuscar.textProperty().addListener((obs, old, newVal) -> filtrarProductos());
+        cbCategoria.valueProperty().addListener((obs, old, newVal) -> filtrarProductos());
+    }
+
+    private void filtrarProductos() {
+        String texto = txtBuscar.getText().trim().toLowerCase();
+        String categoria = cbCategoria.getValue();
+
+        List<Producto> filtrados = cacheProductos.stream()
+                .filter(p -> {
+                    // 1. Filtrar por categoría usando idCategoria
+                    if (categoria != null && !categoria.equals("TODOS")) {
+                        switch (categoria) {
+                            case "PRODUCTOS":
+                                if (p.getIdCategoria() != 1) return false;
+                                break;
+                            case "ACEITES":
+                                if (p.getIdCategoria() != 2) return false;
+                                break;
+                            case "FILTROS":
+                                if (p.getIdCategoria() != 3) return false;
+                                break;
+                            case "FOCOS":
+                                if (p.getIdCategoria() != 4) return false;
+                                break;
+                        }
+                    }
+                    // 2. Filtrar por texto
+                    if (!texto.isEmpty()) {
+                        return p.getNombre().toLowerCase().contains(texto);
+                    }
+                    return true;
+                })
+                .toList();
+
+        productosList.setAll(filtrados);
     }
 
     private void configurarEventos() {

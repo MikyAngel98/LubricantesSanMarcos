@@ -49,6 +49,8 @@ public class VentasController {
     @FXML private Label lblTotal;
     @FXML private Button btnFinalizar;
 
+    @FXML private ComboBox<String> cbCategoria;
+
     // Metodo de pago
     @FXML private ToggleGroup pagoGrupo;
     @FXML private RadioButton rbEfectivo, rbQr;
@@ -101,29 +103,48 @@ public class VentasController {
     }
 
     private void configurarBusqueda() {
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                productosList.setAll(cacheProductos);
-                return;
-            }
-            String buscar = newVal.toLowerCase();
-            List<Producto> filtrados = cacheProductos.stream()
-                    .filter(p -> p.getNombre().toLowerCase().contains(buscar) ||
-                            (p.getMarcaNombre() != null && p.getMarcaNombre().toLowerCase().contains(buscar)) ||
-                            (p.getCategoriaNombre() != null && p.getCategoriaNombre().toLowerCase().contains(buscar)))
-                    .toList();
-            productosList.setAll(filtrados);
-        });
+        // Cargar categorías
+        cbCategoria.getItems().addAll("TODOS", "PRODUCTOS", "ACEITES", "FILTROS", "FOCOS");
+        cbCategoria.getSelectionModel().select("TODOS");
 
-        tblProductos.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                lblProductoSeleccionado.setText("Seleccionado: " + productoSeleccionado.getNombre() +
-                        " | Marca: " + productoSeleccionado.getMarcaNombre() +
-                        " | Stock: " + productoSeleccionado.getStock());
-                txtCantidad.setText("1");
-            }
-        });
+        // Listener para búsqueda (texto + categoría)
+        Runnable buscar = () -> filtrarProductos();
+        txtBuscar.textProperty().addListener((obs, old, newVal) -> buscar.run());
+        cbCategoria.valueProperty().addListener((obs, old, newVal) -> buscar.run());
+    }
+
+    private void filtrarProductos() {
+        String texto = txtBuscar.getText().trim().toLowerCase();
+        String categoria = cbCategoria.getValue();
+
+        List<Producto> filtrados = cacheProductos.stream()
+                .filter(p -> {
+                    // 1. Filtrar por categoría usando idCategoria
+                    if (categoria != null && !categoria.equals("TODOS")) {
+                        switch (categoria) {
+                            case "PRODUCTOS":
+                                if (p.getIdCategoria() != 1) return false;
+                                break;
+                            case "ACEITES":
+                                if (p.getIdCategoria() != 2) return false;
+                                break;
+                            case "FILTROS":
+                                if (p.getIdCategoria() != 3) return false;
+                                break;
+                            case "FOCOS":
+                                if (p.getIdCategoria() != 4) return false;
+                                break;
+                        }
+                    }
+                    // 2. Filtrar por texto
+                    if (!texto.isEmpty()) {
+                        return p.getNombre().toLowerCase().contains(texto);
+                    }
+                    return true;
+                })
+                .toList();
+
+        productosList.setAll(filtrados);
     }
 
     private void configurarEventos() {

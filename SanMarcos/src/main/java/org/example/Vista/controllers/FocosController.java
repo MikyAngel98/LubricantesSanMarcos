@@ -9,32 +9,31 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.Modelo.pojo.Filtro;
+import org.example.Modelo.pojo.Foco;
+import org.example.Modelo.pojo.Producto;
 import org.example.Servicio.ProductoService;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class FiltroFormController {
+public class FocosController {
 
-    @FXML private TableColumn<Filtro, Integer> colId;
-    @FXML private TableColumn<Filtro, String> colNombre;
-    @FXML private TableColumn<Filtro, String> colCodigo;
-    @FXML private TableColumn<Filtro, String> colRosca;
-    @FXML private TableColumn<Filtro, String> colUso;
-    @FXML private TableColumn<Filtro, String> colMarca;
-    @FXML private TableColumn<Filtro, Float> colStock;
-    @FXML private TableColumn<Filtro, Float> colPrecio;
-    @FXML private TableColumn<Filtro, String> colDetalle;
+    @FXML private TableView<Foco> tablaFocos;
+    @FXML private TableColumn<Foco, Integer> colId;
+    @FXML private TableColumn<Foco, String> colNombre;
+    @FXML private TableColumn<Foco, String> colCodigo;
+    @FXML private TableColumn<Foco, String> colMarca;
+    @FXML private TableColumn<Foco, Float> colStock;
+    @FXML private TableColumn<Foco, Float> colPrecio;
+    @FXML private TableColumn<Foco, String> colDetalle;
 
-    @FXML private TableView<Filtro> tablaFiltros;
     @FXML private TextField txtBuscar;
     @FXML private Label lblTotal;
 
     private final ProductoService productoService = new ProductoService();
-    private ObservableList<Filtro> listaFiltros = FXCollections.observableArrayList();
-    private List<Filtro> cacheFiltros;
+    private ObservableList<Foco> listaFocos = FXCollections.observableArrayList();
+    private List<Foco> cacheFocos;
 
     @FXML
     public void initialize() {
@@ -47,22 +46,20 @@ public class FiltroFormController {
         colId.setCellValueFactory(new PropertyValueFactory<>("Id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("Nombre"));
         colCodigo.setCellValueFactory(new PropertyValueFactory<>("Codigo"));
-        colRosca.setCellValueFactory(new PropertyValueFactory<>("Rosca"));
-        colUso.setCellValueFactory(new PropertyValueFactory<>("Uso"));
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marcaNombre"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("Stock"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
         colDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
 
-        tablaFiltros.setItems(listaFiltros);
+        tablaFocos.setItems(listaFocos);
     }
 
     private void cargarDatos() {
         try {
-            List<Filtro> filtros = productoService.listarFiltros();
-            cacheFiltros = filtros;
-            listaFiltros.setAll(cacheFiltros);
-            lblTotal.setText("Total filtros: " + cacheFiltros.size());
+            List<Foco> focos = productoService.listarFocos();  // Usar método nuevo
+            cacheFocos = focos;
+            listaFocos.setAll(cacheFocos);
+            lblTotal.setText("Total focos: " + cacheFocos.size());
         } catch (Exception e) {
             e.printStackTrace();
             lblTotal.setText("Error al cargar datos");
@@ -72,12 +69,12 @@ public class FiltroFormController {
     private void configurarBusqueda() {
         txtBuscar.textProperty().addListener((obs, old, newVal) -> {
             if (newVal == null || newVal.trim().isEmpty()) {
-                listaFiltros.setAll(cacheFiltros);
+                listaFocos.setAll(cacheFocos);
             } else {
-                List<Filtro> filtrados = cacheFiltros.stream()
+                List<Foco> filtrados = cacheFocos.stream()
                         .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
                         .toList();
-                listaFiltros.setAll(filtrados);
+                listaFocos.setAll(filtrados);
             }
         });
     }
@@ -88,43 +85,43 @@ public class FiltroFormController {
     }
 
     @FXML
-    private void abrirNuevoFiltro() {
-        abrirFormularioFiltro(null);
+    private void abrirNuevoFoco() {
+        abrirFormularioProducto(null);
     }
 
     @FXML
-    private void editarFiltro() {
-        Filtro seleccionado = tablaFiltros.getSelectionModel().getSelectedItem();
+    private void editarFoco() {
+        Foco seleccionado = tablaFocos.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            mostrarAlerta("Seleccione un filtro para editar");
+            mostrarAlerta("Seleccione un foco para editar");
             return;
         }
-        abrirFormularioFiltro(seleccionado);
+        abrirFormularioProducto(seleccionado);
     }
 
     @FXML
-    private void eliminarFiltro() {
-        Filtro seleccionado = tablaFiltros.getSelectionModel().getSelectedItem();
+    private void eliminarFoco() {
+        Foco seleccionado = tablaFocos.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            mostrarAlerta("Seleccione un filtro para eliminar");
+            mostrarAlerta("Seleccione un foco para eliminar");
             return;
         }
 
         if (seleccionado.getStock() > 0) {
-            mostrarAlerta("No se puede eliminar el filtro porque tiene stock: " + seleccionado.getStock());
+            mostrarAlerta("No se puede eliminar el foco porque tiene stock: " + seleccionado.getStock());
             return;
         }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar eliminación");
-        confirm.setHeaderText("¿Está seguro de eliminar este filtro?");
+        confirm.setHeaderText("¿Está seguro de eliminar este foco?");
         confirm.setContentText("Producto: " + seleccionado.getNombre() + "\nEsta acción no se puede deshacer.");
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 productoService.eliminarProducto(seleccionado.getId());
-                mostrarInfo("Filtro eliminado correctamente");
+                mostrarInfo("Foco eliminado correctamente");
                 actualizarTabla();
             } catch (Exception e) {
                 mostrarError("Error al eliminar: " + e.getMessage());
@@ -132,20 +129,20 @@ public class FiltroFormController {
         }
     }
 
-    private void abrirFormularioFiltro(Filtro filtro) {
+    private void abrirFormularioProducto(Foco foco) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NuevoProductoView.fxml"));
             Scene scene = new Scene(loader.load());
 
             NuevoProductoController controller = loader.getController();
-            if (filtro != null) {
-                controller.setProductoParaEditar(filtro);
+            if (foco != null) {
+                controller.setProductoParaEditar(foco);  // Pasar el objeto Foco
             } else {
-                controller.setPreseleccionarFiltro();
+                controller.setPreseleccionarFoco();
             }
 
             Stage stage = new Stage();
-            stage.setTitle(filtro == null ? "Nuevo Filtro" : "Editar Filtro");
+            stage.setTitle(foco == null ? "Nuevo Foco" : "Editar Foco");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);

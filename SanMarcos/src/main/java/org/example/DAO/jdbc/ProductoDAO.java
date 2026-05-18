@@ -430,32 +430,73 @@ public class ProductoDAO {
         }
     }
 
-    // ==================== UPDATE - FILTRO ====================
+    // ==================== UPDATE ====================
 
+    // ==================== ACTUALIZAR ACEITE ====================
+    public boolean actualizarAceite(Aceite aceite) {
+        Connection conn = null;
+        try {
+            conn = conexion.getConnection();
+            conn.setAutoCommit(false);
+
+            // 1. Actualizar Producto
+            String sqlProducto = "UPDATE Producto SET Nombre = ?, Precio = ?, Detalle = ?, IdCategoria = ?, IdMarca = ? WHERE Id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlProducto)) {
+                pstmt.setString(1, aceite.getNombre());
+                pstmt.setFloat(2, aceite.getPrecio());
+                pstmt.setString(3, aceite.getDetalle());
+                pstmt.setInt(4, aceite.getIdCategoria());
+                pstmt.setInt(5, aceite.getIdMarca());
+                pstmt.setInt(6, aceite.getId());
+                pstmt.executeUpdate();
+            }
+
+            // 2. Actualizar Aceite
+            String sqlAceite = "UPDATE Aceite SET Viscosidad = ?, TipoAceite = ?, Uso = ?, EsAgrenel = ?, IdPresentacion = ? WHERE IdProducto = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlAceite)) {
+                pstmt.setString(1, aceite.getViscosidad());
+                pstmt.setString(2, aceite.getTipoAceite());
+                pstmt.setString(3, aceite.getUso());
+                pstmt.setBoolean(4, aceite.isEsAgranel());
+                pstmt.setInt(5, aceite.getIdPresentacion());
+                pstmt.setInt(6, aceite.getId());
+                pstmt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar aceite: " + e.getMessage());
+            try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
+            return false;
+        } finally {
+            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            conexion.closeConnection(conn);
+        }
+    }
+
+    // ==================== ACTUALIZAR FILTRO ====================
     public boolean actualizarFiltro(Filtro filtro) {
         Connection conn = null;
         try {
             conn = conexion.getConnection();
             conn.setAutoCommit(false);
 
-            // Actualizar Producto
-            String sqlProducto = "UPDATE Producto SET Nombre = ?, Precio = ?, Stock = ?, " +
-                    "Detalle = ?, IdCategoria = ?, IdMarca = ? WHERE Id = ?";
-
+            // 1. Actualizar Producto
+            String sqlProducto = "UPDATE Producto SET Nombre = ?, Precio = ?, Detalle = ?, IdCategoria = ?, IdMarca = ? WHERE Id = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sqlProducto)) {
                 pstmt.setString(1, filtro.getNombre());
                 pstmt.setFloat(2, filtro.getPrecio());
-                pstmt.setFloat(3, filtro.getStock());
-                pstmt.setString(4, filtro.getDetalle());
-                pstmt.setInt(5, filtro.getIdCategoria());
-                pstmt.setInt(6, filtro.getIdMarca());
-                pstmt.setInt(7, filtro.getId());
+                pstmt.setString(3, filtro.getDetalle());
+                pstmt.setInt(4, filtro.getIdCategoria());
+                pstmt.setInt(5, filtro.getIdMarca());
+                pstmt.setInt(6, filtro.getId());
                 pstmt.executeUpdate();
             }
 
-            // Actualizar Filtro
+            // 2. Actualizar Filtro
             String sqlFiltro = "UPDATE Filtro SET Codigo = ?, Rosca = ?, Uso = ? WHERE IdProducto = ?";
-
             try (PreparedStatement pstmt = conn.prepareStatement(sqlFiltro)) {
                 pstmt.setString(1, filtro.getCodigo());
                 pstmt.setString(2, filtro.getRosca());
@@ -473,6 +514,47 @@ public class ProductoDAO {
             return false;
         } finally {
             try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            conexion.closeConnection(conn);
+        }
+    }
+
+    // ==================== ACTUALIZAR  FOCO ====================
+    public boolean actualizarFoco(Foco foco) {
+        Connection conn = null;
+        try {
+            conn = conexion.getConnection();
+            conn.setAutoCommit(false);
+
+            // 1. Actualizar Producto
+            String sqlProducto = "UPDATE Producto SET Nombre = ?, Precio = ?, Detalle = ?, IdCategoria = ?, IdMarca = ? WHERE Id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlProducto)) {
+                pstmt.setString(1, foco.getNombre());
+                pstmt.setFloat(2, foco.getPrecio());
+                pstmt.setString(3, foco.getDetalle());
+                pstmt.setInt(4, foco.getIdCategoria());
+                pstmt.setInt(5, foco.getIdMarca());
+                pstmt.setInt(6, foco.getId());
+                pstmt.executeUpdate();
+            }
+
+            // 2. Actualizar Foco
+            String sqlFoco = "UPDATE Foco SET Codigo = ? WHERE IdProducto = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlFoco)) {
+                pstmt.setString(1, foco.getCodigo());
+                pstmt.setInt(2, foco.getId());
+                pstmt.executeUpdate();
+            }
+
+            conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar foco: " + e.getMessage());
+            try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
+            return false;
+        } finally {
+            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            conexion.closeConnection(conn);
         }
     }
 
@@ -509,6 +591,40 @@ public class ProductoDAO {
             System.err.println("Error al obtener filtro: " + e.getMessage());
         }
         return Optional.empty();
+    }
+
+    public List<Foco> obtenerFocos() {
+        List<Foco> focos = new ArrayList<>();
+        String sql = "SELECT p.*, f.Codigo, " +
+                "m.Nombre as MarcaNombre " +
+                "FROM Producto p " +
+                "INNER JOIN Foco f ON p.Id = f.IdProducto " +
+                "INNER JOIN Marca m ON p.IdMarca = m.Id " +
+                "ORDER BY p.Nombre";
+
+        try (Connection conn = conexion.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Foco foco = new Foco();
+                foco.setId(rs.getInt("Id"));
+                foco.setNombre(rs.getString("Nombre"));
+                foco.setPrecio(rs.getFloat("Precio"));
+                foco.setStock(rs.getFloat("Stock"));
+                foco.setDetalle(rs.getString("Detalle"));
+                foco.setIdCategoria(rs.getInt("IdCategoria"));
+                foco.setIdMarca(rs.getInt("IdMarca"));
+                foco.setCodigo(rs.getString("Codigo"));
+                foco.setMarcaNombre(rs.getString("MarcaNombre"));
+
+                focos.add(foco);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener focos: " + e.getMessage());
+        }
+        return focos;
     }
 
     public List<Aceite> obtenerAceites() {
@@ -610,6 +726,39 @@ public class ProductoDAO {
             System.err.println("Error al obtener filtros: " + e.getMessage());
         }
         return filtros;
+    }
+
+    public List<Producto> obtenerProductosBase() {
+        List<Producto> productos = new ArrayList<>();
+        String sql = "SELECT p.*, c.Nombre as CategoriaNombre, m.Nombre as MarcaNombre " +
+                "FROM Producto p " +
+                "INNER JOIN Categoria c ON p.IdCategoria = c.Id " +
+                "INNER JOIN Marca m ON p.IdMarca = m.Id " +
+                "WHERE p.IdCategoria = 1 " +  // Solo productos base
+                "ORDER BY p.Nombre";
+
+        try (Connection conn = conexion.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Producto producto = new Producto();
+                producto.setId(rs.getInt("Id"));
+                producto.setNombre(rs.getString("Nombre"));
+                producto.setPrecio(rs.getFloat("Precio"));
+                producto.setStock(rs.getFloat("Stock"));
+                producto.setDetalle(rs.getString("Detalle"));
+                producto.setIdCategoria(rs.getInt("IdCategoria"));
+                producto.setIdMarca(rs.getInt("IdMarca"));
+                producto.setCategoriaNombre(rs.getString("CategoriaNombre"));
+                producto.setMarcaNombre(rs.getString("MarcaNombre"));
+                productos.add(producto);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al obtener productos base: " + e.getMessage());
+        }
+        return productos;
     }
 
 }

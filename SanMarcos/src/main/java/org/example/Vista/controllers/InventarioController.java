@@ -14,25 +14,22 @@ import org.example.Servicio.ProductoService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class InventarioController {
 
-    // Componentes de la tabla
     @FXML private TableView<Producto> tablaProductos;
     @FXML private TableColumn<Producto, Integer> colId;
     @FXML private TableColumn<Producto, String> colNombre;
     @FXML private TableColumn<Producto, Float> colStock;
     @FXML private TableColumn<Producto, Float> colPrecio;
-    @FXML private TableColumn<Producto, String> colCategoria;
     @FXML private TableColumn<Producto, String> colMarca;
     @FXML private TableColumn<Producto, String> colDetalle;
 
-    // Componentes de búsqueda y estado
     @FXML private TextField txtBuscar;
     @FXML private Label lblTotalProductos;
     @FXML private Label lblBajoStock;
 
-    // Servicios y datos
     private final ProductoService productoService = new ProductoService();
     private ObservableList<Producto> listaProductos = FXCollections.observableArrayList();
     private List<Producto> cacheProductos;
@@ -49,17 +46,13 @@ public class InventarioController {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("Nombre"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("Stock"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoriaNombre"));
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marcaNombre"));
         colDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
-
-
-
         tablaProductos.setItems(listaProductos);
     }
 
     private void cargarDatos() {
-        cacheProductos = productoService.listarTodos();
+        cacheProductos = productoService.listarProductosBase();
         listaProductos.setAll(cacheProductos);
         actualizarEstado();
     }
@@ -85,13 +78,14 @@ public class InventarioController {
                 .count();
         lblBajoStock.setText("⚠️ Productos bajo stock: " + bajoStock);
 
-        // Si hay bajo stock, cambiar color a rojo
         if (bajoStock > 0) {
             lblBajoStock.setStyle("-fx-text-fill: #e74c3c;");
         } else {
             lblBajoStock.setStyle("-fx-text-fill: #e67e22;");
         }
     }
+
+    // ==================== MÉTODOS CRUD ====================
 
     @FXML
     private void actualizarTabla() {
@@ -100,18 +94,68 @@ public class InventarioController {
 
     @FXML
     private void abrirNuevoProducto() {
+        abrirFormularioProducto(null);
+    }
+
+    @FXML
+    private void editarProducto() {
+        Producto seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Seleccione un producto para editar");
+            return;
+        }
+        abrirFormularioProducto(seleccionado);
+    }
+
+    @FXML
+    private void eliminarProducto() {
+        Producto seleccionado = tablaProductos.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Seleccione un producto para eliminar");
+            return;
+        }
+
+        // Validar que el stock sea 0
+        if (seleccionado.getStock() > 0) {
+            mostrarAlerta("No se puede eliminar el producto porque tiene stock: " + seleccionado.getStock());
+            return;
+        }
+
+        // Confirmar eliminación
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar eliminación");
+        confirm.setHeaderText("¿Está seguro de eliminar el producto?");
+        confirm.setContentText("Producto: " + seleccionado.getNombre() + "\nEsta acción no se puede deshacer.");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                productoService.eliminarProducto(seleccionado.getId());
+                mostrarInfo("Producto eliminado correctamente");
+                actualizarTabla();
+            } catch (Exception e) {
+                mostrarError("Error al eliminar: " + e.getMessage());
+            }
+        }
+    }
+
+    private void abrirFormularioProducto(Producto producto) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NuevoProductoView.fxml"));
             Scene scene = new Scene(loader.load());
+
+            // Obtener el controlador y pasar el producto para edición
+            NuevoProductoController controller = loader.getController();
+            if (producto != null) {
+                controller.setProductoParaEditar(producto);
+            }
+
             Stage stage = new Stage();
-            stage.setTitle("Registrar Producto");
+            stage.setTitle(producto == null ? "Registrar Producto" : "Editar Producto");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
-
-            // Recargar datos al cerrar
             stage.setOnHidden(event -> actualizarTabla());
-
             stage.showAndWait();
 
         } catch (IOException e) {
@@ -120,9 +164,27 @@ public class InventarioController {
         }
     }
 
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    private void mostrarAlerta(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Advertencia");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
     private void mostrarError(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarInfo(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Información");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();

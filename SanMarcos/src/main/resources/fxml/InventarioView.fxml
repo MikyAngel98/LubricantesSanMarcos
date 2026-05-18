@@ -9,8 +9,11 @@
 
     <Label text="📦 INVENTARIO DE PRODUCTOS" styleClass="titulo"/>
 
+    <!-- Barra de herramientas con EDITAR y ELIMINAR -->
     <HBox spacing="10">
         <Button text="➕ NUEVO PRODUCTO" onAction="#abrirNuevoProducto" styleClass="btn-nuevo"/>
+        <Button text="✏️ EDITAR" onAction="#editarProducto" styleClass="btn-editar"/>
+        <Button text="🗑️ ELIMINAR" onAction="#eliminarProducto" styleClass="btn-eliminar"/>
         <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar producto..." styleClass="buscador"/>
@@ -20,7 +23,6 @@
         <columns>
             <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
             <TableColumn fx:id="colNombre" text="Producto" prefWidth="200"/>
-            <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="100"/>
             <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
             <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
             <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="100"/>

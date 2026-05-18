@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.controllers.FocosController"
+      spacing="15" styleClass="focos-container" stylesheets="@../css/focos.css">
+
+    <Label text="💡 FOCOS EN INVENTARIO" styleClass="titulo"/>
+
+    <HBox spacing="10">
+        <Button text="➕ NUEVO FOCO" onAction="#abrirNuevoFoco" styleClass="btn-nuevo"/>
+        <Button text="✏️ EDITAR" onAction="#editarFoco" styleClass="btn-editar"/>
+        <Button text="🗑️ ELIMINAR" onAction="#eliminarFoco" styleClass="btn-eliminar"/>
+        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtBuscar" promptText="🔍 Buscar foco..." styleClass="buscador"/>
+    </HBox>
+
+    <TableView fx:id="tablaFocos" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="colNombre" text="Producto" prefWidth="200"/>
+            <TableColumn fx:id="colCodigo" text="Código" prefWidth="120"/>
+            <TableColumn fx:id="colMarca" text="Marca" prefWidth="120"/>
+            <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+            <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="100"/>
+            <TableColumn fx:id="colDetalle" text="Detalle" prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="lblTotal" text="Total focos: 0" styleClass="estado"/>
+
+</VBox>

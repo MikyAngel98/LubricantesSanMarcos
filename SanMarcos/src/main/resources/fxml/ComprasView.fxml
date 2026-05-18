@@ -27,8 +27,10 @@
         <!-- COLUMNA IZQUIERDA -->
         <VBox spacing="10" HBox.hgrow="ALWAYS">
 
-            <Label text="BUSCAR PRODUCTO:" style="-fx-font-weight: bold;"/>
-            <TextField fx:id="txtBuscar" promptText="Escriba nombre, marca o categoría..." styleClass="buscador"/>
+            <HBox spacing="10">
+                <TextField fx:id="txtBuscar" promptText="Escriba nombre..." HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <ComboBox fx:id="cbCategoria" prefWidth="150" promptText="Categoría"/>
+            </HBox>
 
             <Label text="PRODUCTOS:" style="-fx-font-weight: bold;"/>
 

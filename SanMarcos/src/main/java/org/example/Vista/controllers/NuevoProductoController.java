@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.example.Modelo.jpa.Marca;
 import org.example.Modelo.jpa.Presentacion;
 import org.example.Modelo.pojo.*;
@@ -39,6 +38,10 @@ public class NuevoProductoController {
     private final ProductoService productoService = new ProductoService();
     private final PresentacionService presentacionService = new PresentacionService();
 
+    // Variable para saber si estamos editando
+    private Producto productoEditando;
+    private boolean esEdicion = false;
+
     @FXML
     public void initialize() {
         cargarMarcas();
@@ -48,6 +51,104 @@ public class NuevoProductoController {
         cargarPresentaciones();
         cbMarca.setEditable(false);
         rbProducto.setSelected(true);
+    }
+
+    // ==================== METODO PARA EDITAR ====================
+
+    public void setProductoParaEditar(Producto producto) {
+        this.productoEditando = producto;
+        this.esEdicion = true;
+
+        // Deshabilitar RadioButtons para que no se pueda cambiar el tipo
+        rbProducto.setDisable(true);
+        rbAceite.setDisable(true);
+        rbFiltro.setDisable(true);
+        rbFoco.setDisable(true);
+
+        cargarDatosProducto();
+    }
+    public void setPreseleccionarFoco() {
+        this.esEdicion = false;
+        this.productoEditando = null;
+        rbFoco.setSelected(true);
+        rbProducto.setDisable(false);
+        rbAceite.setDisable(false);
+        rbFiltro.setDisable(false);
+        rbFoco.setDisable(false);
+        setCamposFoco();
+    }
+
+    public void setPreseleccionarAceite() {
+        this.esEdicion = false;
+        this.productoEditando = null;
+        rbAceite.setSelected(true);
+        setCamposAceite();
+    }
+
+    public void setPreseleccionarFiltro() {
+        this.esEdicion = false;
+        this.productoEditando = null;
+        rbFiltro.setSelected(true);
+        setCamposFiltro();
+    }
+
+    private void cargarDatosProducto() {
+        if (productoEditando == null) return;
+
+        // Cargar datos comunes
+        txtNombre.setText(productoEditando.getNombre());
+        txtPrecio.setText(String.valueOf(productoEditando.getPrecio()));
+        txtStock.setText(String.valueOf(productoEditando.getStock()));
+        txtDetalle.setText(productoEditando.getDetalle());
+
+        // Seleccionar marca
+        for (Marca m : cbMarca.getItems()) {
+            if (m.getId() == productoEditando.getIdMarca()) {
+                cbMarca.getSelectionModel().select(m);
+                break;
+            }
+        }
+
+        // Identificar tipo de producto y cargar datos específicos
+        if (productoEditando instanceof Aceite) {
+            rbAceite.setSelected(true);
+            Aceite a = (Aceite) productoEditando;
+            cbViscosidad.setValue(a.getViscosidad());
+            cbTipoAceite.setValue(a.getTipoAceite());
+            txtUso.setText(a.getUso());
+            rbAgranelSi.setSelected(a.isEsAgranel());
+            rbAgranelNo.setSelected(!a.isEsAgranel());
+
+            // Seleccionar presentación
+            for (Presentacion p : cbPresentacion.getItems()) {
+                if (p.getId() == a.getIdPresentacion()) {
+                    cbPresentacion.getSelectionModel().select(p);
+                    break;
+                }
+            }
+        }
+        else if (productoEditando instanceof Filtro) {
+            rbFiltro.setSelected(true);
+            Filtro f = (Filtro) productoEditando;
+            txtCodigo.setText(f.getCodigo());
+            txtRosca.setText(f.getRosca());
+            txtUso.setText(f.getUso());
+        }
+        else if (productoEditando instanceof Foco) {
+            rbFoco.setSelected(true);
+            Foco f = (Foco) productoEditando;
+            txtCodigo.setText(f.getCodigo());
+        }
+        else {
+            rbProducto.setSelected(true);
+        }
+
+        // Aplicar visibilidad de campos según el tipo
+        RadioButton selected = (RadioButton) categoriaGrupo.getSelectedToggle();
+        if (selected == rbAceite) setCamposAceite();
+        else if (selected == rbFiltro) setCamposFiltro();
+        else if (selected == rbFoco) setCamposFoco();
+        else setCamposProductoBase();
     }
 
     private void cargarMarcas() {
@@ -78,7 +179,6 @@ public class NuevoProductoController {
     }
 
     private void setCamposProductoBase() {
-        // Deshabilitar campos específicos
         cbViscosidad.setDisable(true);
         cbTipoAceite.setDisable(true);
         cbPresentacion.setDisable(true);
@@ -149,32 +249,89 @@ public class NuevoProductoController {
             return;
         }
 
-        String categoria = selected.getText().trim(); // "PRODUCTO", "ACEITE", "FILTRO", "FOCO"
+        String categoria = selected.getText().trim();
 
         try {
-            switch (categoria) {
-                case "PRODUCTO":
-                    guardarProductoBase();
-                    break;
-                case "ACEITE":
-                    guardarAceite();
-                    break;
-                case "FILTRO":
-                    guardarFiltro();
-                    break;
-                case "FOCO":
-                    guardarFoco();
-                    break;
-                default:
-                    mostrarAlerta("Categoría no válida: " + categoria);
-                    return;
+            if (esEdicion) {
+                // Si estamos editando, actualizar
+                actualizarProducto(categoria);
+            } else {
+                // Si es nuevo, guardar
+                switch (categoria) {
+                    case "PRODUCTO": guardarProductoBase(); break;
+                    case "ACEITE": guardarAceite(); break;
+                    case "FILTRO": guardarFiltro(); break;
+                    case "FOCO": guardarFoco(); break;
+                    default: mostrarAlerta("Categoría no válida"); return;
+                }
             }
-            mostrarInfo("Producto guardado correctamente");
-            limpiarFormulario();
+            mostrarInfo(esEdicion ? "Producto actualizado correctamente" : "Producto guardado correctamente");
+
+            if (!esEdicion) {
+                limpiarFormulario();
+            } else {
+                cerrarVentana();
+            }
         } catch (Exception e) {
             mostrarError("Error al guardar: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void actualizarProducto(String categoria) {
+        switch (categoria) {
+            case "PRODUCTO":
+                actualizarProductoBase();
+                break;
+            case "ACEITE":
+                actualizarAceite();
+                break;
+            case "FILTRO":
+                actualizarFiltro();
+                break;
+            case "FOCO":
+                actualizarFoco();
+                break;
+        }
+    }
+
+    private void actualizarProductoBase() {
+        productoEditando.setNombre(txtNombre.getText().trim());
+        productoEditando.setPrecio(Float.parseFloat(txtPrecio.getText().trim()));
+        productoEditando.setDetalle(txtDetalle.getText().trim());
+        productoEditando.setIdMarca(obtenerMarcaSeleccionada().getId());
+        // El stock NO se actualiza aquí (solo con compras/ventas)
+
+        productoService.actualizarProducto(productoEditando);
+    }
+
+    private void actualizarAceite() {
+        actualizarProductoBase();
+        Aceite a = (Aceite) productoEditando;
+        a.setViscosidad(cbViscosidad.getValue());
+        a.setTipoAceite(cbTipoAceite.getValue());
+        a.setUso(txtUso.getText().trim());
+        a.setEsAgranel(rbAgranelSi.isSelected());
+        if (cbPresentacion.getValue() != null) {
+            a.setIdPresentacion(cbPresentacion.getValue().getId());
+        }
+        productoService.actualizarAceite(a);
+    }
+
+    private void actualizarFiltro() {
+        actualizarProductoBase();
+        Filtro f = (Filtro) productoEditando;
+        f.setCodigo(txtCodigo.getText().trim());
+        f.setRosca(txtRosca.getText().trim());
+        f.setUso(txtUso.getText().trim());
+        productoService.actualizarFiltro(f);
+    }
+
+    private void actualizarFoco() {
+        actualizarProductoBase();
+        Foco f = (Foco) productoEditando;
+        f.setCodigo(txtCodigo.getText().trim());
+        productoService.actualizarFoco(f);
     }
 
     private Marca obtenerMarcaSeleccionada() {
@@ -200,7 +357,6 @@ public class NuevoProductoController {
         a.setUso(txtUso.getText().trim());
         a.setEsAgranel(rbAgranelSi.isSelected());
 
-        // Obtener presentación seleccionada
         Presentacion presentacion = cbPresentacion.getSelectionModel().getSelectedItem();
         if (presentacion != null) {
             a.setIdPresentacion(presentacion.getId());
@@ -233,32 +389,21 @@ public class NuevoProductoController {
         p.setStock(Float.parseFloat(txtStock.getText().trim()));
         p.setDetalle(txtDetalle.getText().trim());
 
-        // Obtener marca
         Marca marca = obtenerMarcaSeleccionada();
         p.setIdMarca(marca.getId());
 
-        // Asignar categoría según el tipo seleccionado
         RadioButton selected = (RadioButton) categoriaGrupo.getSelectedToggle();
         String categoria = selected.getText();
 
         switch (categoria) {
-            case "PRODUCTO":
-                p.setIdCategoria(1);
-                break;
-            case "ACEITE":
-                p.setIdCategoria(2);
-                break;
-            case "FILTRO":
-                p.setIdCategoria(3);
-                break;
-            case "FOCO":
-                p.setIdCategoria(4);
-                break;
-            default:
-                p.setIdCategoria(1); // PRODUCTO por defecto
-                break;
+            case "PRODUCTO": p.setIdCategoria(1); break;
+            case "ACEITE": p.setIdCategoria(2); break;
+            case "FILTRO": p.setIdCategoria(3); break;
+            case "FOCO": p.setIdCategoria(4); break;
+            default: p.setIdCategoria(1); break;
         }
     }
+
     private boolean validarCamposComunes() {
         if (txtNombre.getText().trim().isEmpty()) { mostrarAlerta("El nombre es obligatorio"); return false; }
         if (cbMarca.getValue() == null) { mostrarAlerta("Seleccione una marca"); return false; }
@@ -277,8 +422,11 @@ public class NuevoProductoController {
         if (txtUso.getText().trim().isEmpty()) throw new RuntimeException("Uso obligatorio");
     }
 
+    private void validarCamposFoco() {
+        if (txtCodigo.getText().trim().isEmpty()) throw new RuntimeException("Código obligatorio");
+    }
+
     private void limpiarFormulario() {
-        // Limpiar campos de texto
         txtNombre.clear();
         txtPrecio.clear();
         txtStock.clear();
@@ -287,28 +435,27 @@ public class NuevoProductoController {
         txtCodigo.clear();
         txtRosca.clear();
 
-        // Limpiar selecciones de ComboBox
         cbMarca.getSelectionModel().clearSelection();
         cbViscosidad.getSelectionModel().clearSelection();
         cbTipoAceite.getSelectionModel().clearSelection();
         cbPresentacion.getSelectionModel().clearSelection();
 
-        // Resetear RadioButtons
         rbProducto.setSelected(true);
         rbAgranelNo.setSelected(true);
 
-        // Resetear estado de campos
         setCamposProductoBase();
-
-        // Enfocar primer campo
         txtNombre.requestFocus();
+
+        esEdicion = false;
+        productoEditando = null;
     }
 
-    private void validarCamposFoco() {
-        if (txtCodigo.getText().trim().isEmpty()) throw new RuntimeException("Código obligatorio");
-    }
+    @FXML private void cancelar() { cerrarVentana(); }
 
-    @FXML private void cancelar() { limpiarFormulario(); }
+    private void cerrarVentana() {
+        Stage stage = (Stage) txtNombre.getScene().getWindow();
+        stage.close();
+    }
 
     private void mostrarAlerta(String msg) { new Alert(Alert.AlertType.WARNING, msg).showAndWait(); }
     private void mostrarError(String msg) { new Alert(Alert.AlertType.ERROR, msg).showAndWait(); }

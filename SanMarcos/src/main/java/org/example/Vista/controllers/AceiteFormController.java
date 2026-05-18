@@ -3,16 +3,21 @@ package org.example.Vista.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.Modelo.pojo.Aceite;
 import org.example.Servicio.ProductoService;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class AceiteFormController {
 
-    // Columnas
     @FXML private TableColumn<Aceite, Integer> colId;
     @FXML private TableColumn<Aceite, String> colNombre;
     @FXML private TableColumn<Aceite, String> colViscosidad;
@@ -89,5 +94,102 @@ public class AceiteFormController {
     @FXML
     private void actualizarTabla() {
         cargarDatos();
+    }
+
+    @FXML
+    private void abrirNuevoAceite() {
+        abrirFormularioAceite(null);
+    }
+
+    @FXML
+    private void editarAceite() {
+        Aceite seleccionado = tablaAceites.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Seleccione un aceite para editar");
+            return;
+        }
+        abrirFormularioAceite(seleccionado);
+    }
+
+    @FXML
+    private void eliminarAceite() {
+        Aceite seleccionado = tablaAceites.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Seleccione un aceite para eliminar");
+            return;
+        }
+
+        if (seleccionado.getStock() > 0) {
+            mostrarAlerta("No se puede eliminar el aceite porque tiene stock: " + seleccionado.getStock());
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar eliminación");
+        confirm.setHeaderText("¿Está seguro de eliminar este aceite?");
+        confirm.setContentText("Producto: " + seleccionado.getNombre() + "\nEsta acción no se puede deshacer.");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                productoService.eliminarProducto(seleccionado.getId());
+                mostrarInfo("Aceite eliminado correctamente");
+                actualizarTabla();
+            } catch (Exception e) {
+                mostrarError("Error al eliminar: " + e.getMessage());
+            }
+        }
+    }
+
+    private void abrirFormularioAceite(Aceite aceite) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NuevoProductoView.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            NuevoProductoController controller = loader.getController();
+            if (aceite != null) {
+                controller.setProductoParaEditar(aceite);
+            } else {
+                controller.setPreseleccionarAceite();
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle(aceite == null ? "Nuevo Aceite" : "Editar Aceite");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setResizable(false);
+            stage.setOnHidden(event -> actualizarTabla());
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error al abrir el formulario");
+        }
+    }
+
+    // ==================== MÉTODOS AUXILIARES ====================
+
+    private void mostrarAlerta(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Advertencia");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarError(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarInfo(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Información");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

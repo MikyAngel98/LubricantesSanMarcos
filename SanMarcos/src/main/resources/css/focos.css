@@ -1,0 +1,96 @@
+/* focos.css - Estilos para la lista de focos */
+
+.focos-container {
+    -fx-padding: 20;
+    -fx-background-color: #f8f9fa;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.btn-nuevo {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-nuevo:hover { -fx-background-color: #2ecc71; }
+
+.btn-editar {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-editar:hover { -fx-background-color: #3498db; }
+
+.btn-eliminar {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-eliminar:hover { -fx-background-color: #c0392b; }
+
+.btn-actualizar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-actualizar:hover { -fx-background-color: #5dade2; }
+
+.buscador {
+    -fx-pref-width: 250;
+    -fx-pref-height: 32;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-padding: 5 10;
+}
+
+.buscador:focused {
+    -fx-border-color: #5dade2;
+    -fx-border-width: 1.5;
+}
+
+.table-view {
+    -fx-border-color: #e2e8f0;
+    -fx-background-color: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #5dade2;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+.estado {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}

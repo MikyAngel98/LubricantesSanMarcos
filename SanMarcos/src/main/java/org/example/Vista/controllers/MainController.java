@@ -38,6 +38,9 @@ public class MainController {
     }
 
     @FXML
+    private void abrirFocos() {cargarPanel("/fxml/FocosView.fxml");}
+
+    @FXML
     private void abrirVentas() {
         cargarPanel("/fxml/VentasView.fxml");
     }

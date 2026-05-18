@@ -24,6 +24,7 @@
             <Button text="📦 INVENTARIO - PRODUCTOS" styleClass="btn-menu" onAction="#abrirInventario"/>
             <Button text="🛢️ ACEITES" styleClass="btn-menu" onAction="#abrirAceites"/>
             <Button text="🔧 FILTROS" styleClass="btn-menu" onAction="#abrirFiltros"/>
+            <Button text="💡 FOCOS" onAction="#abrirFocos" styleClass="btn-menu"/>
 
             <Separator styleClass="separator"/>
 

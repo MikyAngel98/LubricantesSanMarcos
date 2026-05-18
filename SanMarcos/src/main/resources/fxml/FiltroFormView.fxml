@@ -10,6 +10,9 @@
     <Label text="🔧 FILTROS EN INVENTARIO" styleClass="titulo"/>
 
     <HBox spacing="10">
+        <Button text="➕ NUEVO FILTRO" onAction="#abrirNuevoFiltro" styleClass="btn-nuevo"/>
+        <Button text="✏️ EDITAR" onAction="#editarFiltro" styleClass="btn-editar"/>
+        <Button text="🗑️ ELIMINAR" onAction="#eliminarFiltro" styleClass="btn-eliminar"/>
         <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar filtro..." styleClass="buscador"/>

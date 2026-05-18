@@ -54,3 +54,50 @@
     -fx-font-size: 12px;
     -fx-text-fill: #7f8c8d;
 }
+.btn-nuevo {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-nuevo:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.btn-editar {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-editar:hover {
+    -fx-background-color: #3498db;
+}
+
+.btn-eliminar {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-eliminar:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-actualizar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-actualizar:hover {
+    -fx-background-color: #5dade2;
+}
