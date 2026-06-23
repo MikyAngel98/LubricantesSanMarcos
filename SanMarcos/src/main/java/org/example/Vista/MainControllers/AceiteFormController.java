@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,35 +9,45 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.Modelo.pojo.Filtro;
+import org.example.Modelo.pojo.Aceite;
 import org.example.Servicio.ProductoService;
+import org.example.utils.SessionManager;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class FiltroFormController {
+public class AceiteFormController {
 
-    @FXML private TableColumn<Filtro, Integer> colId;
-    @FXML private TableColumn<Filtro, String> colNombre;
-    @FXML private TableColumn<Filtro, String> colCodigo;
-    @FXML private TableColumn<Filtro, String> colRosca;
-    @FXML private TableColumn<Filtro, String> colUso;
-    @FXML private TableColumn<Filtro, String> colMarca;
-    @FXML private TableColumn<Filtro, Float> colStock;
-    @FXML private TableColumn<Filtro, Float> colPrecio;
-    @FXML private TableColumn<Filtro, String> colDetalle;
+    @FXML private TableColumn<Aceite, Integer> colId;
+    @FXML private TableColumn<Aceite, String> colNombre;
+    @FXML private TableColumn<Aceite, String> colViscosidad;
+    @FXML private TableColumn<Aceite, String> colMarca;
+    @FXML private TableColumn<Aceite, Float> colPrecio;
+    @FXML private TableColumn<Aceite, Float> colStock;
+    @FXML private TableColumn<Aceite, String> colPresentacion;
+    @FXML private TableColumn<Aceite, String> colAgranel;
+    @FXML private TableColumn<Aceite, String> colTipo;
+    @FXML private TableColumn<Aceite, String> colUso;
+    @FXML private TableColumn<Aceite, String> colDetalle;
 
-    @FXML private TableView<Filtro> tablaFiltros;
+    @FXML private TableView<Aceite> tablaAceites;
     @FXML private TextField txtBuscar;
     @FXML private Label lblTotal;
 
+    // Botones
+    @FXML private Button btnNuevo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnEliminar;
+    @FXML private Button btnActualizar;
+
     private final ProductoService productoService = new ProductoService();
-    private ObservableList<Filtro> listaFiltros = FXCollections.observableArrayList();
-    private List<Filtro> cacheFiltros;
+    private ObservableList<Aceite> listaAceites = FXCollections.observableArrayList();
+    private List<Aceite> cacheAceites;
 
     @FXML
     public void initialize() {
+        aplicarPermisos();
         configurarTabla();
         cargarDatos();
         configurarBusqueda();
@@ -46,23 +56,40 @@ public class FiltroFormController {
     private void configurarTabla() {
         colId.setCellValueFactory(new PropertyValueFactory<>("Id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("Nombre"));
-        colCodigo.setCellValueFactory(new PropertyValueFactory<>("Codigo"));
-        colRosca.setCellValueFactory(new PropertyValueFactory<>("Rosca"));
-        colUso.setCellValueFactory(new PropertyValueFactory<>("Uso"));
+        colViscosidad.setCellValueFactory(new PropertyValueFactory<>("Viscosidad"));
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marcaNombre"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("Stock"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("Stock"));
+        colPresentacion.setCellValueFactory(new PropertyValueFactory<>("presentacionNombre"));
+
+        colAgranel.setCellValueFactory(cellData -> {
+            boolean granel = cellData.getValue().isEsAgranel();
+            return new javafx.beans.property.SimpleStringProperty(granel ? "Sí" : "No");
+        });
+
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("TipoAceite"));
+        colUso.setCellValueFactory(new PropertyValueFactory<>("Uso"));
         colDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
 
-        tablaFiltros.setItems(listaFiltros);
+        tablaAceites.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+
+        tablaAceites.setItems(listaAceites);
+    }
+
+    private void aplicarPermisos() {
+        boolean esVendedor = SessionManager.getInstance().isVendedor();
+
+        btnNuevo.setDisable(esVendedor);
+        btnEditar.setDisable(esVendedor);
+        btnEliminar.setDisable(esVendedor);
     }
 
     private void cargarDatos() {
         try {
-            List<Filtro> filtros = productoService.listarFiltros();
-            cacheFiltros = filtros;
-            listaFiltros.setAll(cacheFiltros);
-            lblTotal.setText("Total filtros: " + cacheFiltros.size());
+            List<Aceite> aceites = productoService.listarAceites();
+            cacheAceites = aceites;
+            listaAceites.setAll(cacheAceites);
+            lblTotal.setText("Total aceites: " + cacheAceites.size());
         } catch (Exception e) {
             e.printStackTrace();
             lblTotal.setText("Error al cargar datos");
@@ -72,12 +99,12 @@ public class FiltroFormController {
     private void configurarBusqueda() {
         txtBuscar.textProperty().addListener((obs, old, newVal) -> {
             if (newVal == null || newVal.trim().isEmpty()) {
-                listaFiltros.setAll(cacheFiltros);
+                listaAceites.setAll(cacheAceites);
             } else {
-                List<Filtro> filtrados = cacheFiltros.stream()
-                        .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
+                List<Aceite> filtrados = cacheAceites.stream()
+                        .filter(a -> a.getNombre().toLowerCase().contains(newVal.toLowerCase()))
                         .toList();
-                listaFiltros.setAll(filtrados);
+                listaAceites.setAll(filtrados);
             }
         });
     }
@@ -88,43 +115,43 @@ public class FiltroFormController {
     }
 
     @FXML
-    private void abrirNuevoFiltro() {
-        abrirFormularioFiltro(null);
+    private void abrirNuevoAceite() {
+        abrirFormularioAceite(null);
     }
 
     @FXML
-    private void editarFiltro() {
-        Filtro seleccionado = tablaFiltros.getSelectionModel().getSelectedItem();
+    private void editarAceite() {
+        Aceite seleccionado = tablaAceites.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            mostrarAlerta("Seleccione un filtro para editar");
+            mostrarAlerta("Seleccione un aceite para editar");
             return;
         }
-        abrirFormularioFiltro(seleccionado);
+        abrirFormularioAceite(seleccionado);
     }
 
     @FXML
-    private void eliminarFiltro() {
-        Filtro seleccionado = tablaFiltros.getSelectionModel().getSelectedItem();
+    private void eliminarAceite() {
+        Aceite seleccionado = tablaAceites.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
-            mostrarAlerta("Seleccione un filtro para eliminar");
+            mostrarAlerta("Seleccione un aceite para eliminar");
             return;
         }
 
         if (seleccionado.getStock() > 0) {
-            mostrarAlerta("No se puede eliminar el filtro porque tiene stock: " + seleccionado.getStock());
+            mostrarAlerta("No se puede eliminar el aceite porque tiene stock: " + seleccionado.getStock());
             return;
         }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmar eliminación");
-        confirm.setHeaderText("¿Está seguro de eliminar este filtro?");
+        confirm.setHeaderText("¿Está seguro de eliminar este aceite?");
         confirm.setContentText("Producto: " + seleccionado.getNombre() + "\nEsta acción no se puede deshacer.");
 
         Optional<ButtonType> result = confirm.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
                 productoService.eliminarProducto(seleccionado.getId());
-                mostrarInfo("Filtro eliminado correctamente");
+                mostrarInfo("Aceite eliminado correctamente");
                 actualizarTabla();
             } catch (Exception e) {
                 mostrarError("Error al eliminar: " + e.getMessage());
@@ -132,20 +159,20 @@ public class FiltroFormController {
         }
     }
 
-    private void abrirFormularioFiltro(Filtro filtro) {
+    private void abrirFormularioAceite(Aceite aceite) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NuevoProductoView.fxml"));
             Scene scene = new Scene(loader.load());
 
             NuevoProductoController controller = loader.getController();
-            if (filtro != null) {
-                controller.setProductoParaEditar(filtro);
+            if (aceite != null) {
+                controller.setProductoParaEditar(aceite);
             } else {
-                controller.setPreseleccionarFiltro();
+                controller.setPreseleccionarAceite();
             }
 
             Stage stage = new Stage();
-            stage.setTitle(filtro == null ? "Nuevo Filtro" : "Editar Filtro");
+            stage.setTitle(aceite == null ? "Nuevo Aceite" : "Editar Aceite");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
@@ -167,6 +194,8 @@ public class FiltroFormController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+
 
     private void mostrarError(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

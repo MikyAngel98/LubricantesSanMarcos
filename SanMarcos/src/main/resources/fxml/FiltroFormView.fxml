@@ -3,19 +3,34 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.Vista.controllers.FiltroFormController"
+      fx:controller="org.example.Vista.MainControllers.FiltroFormController"
       spacing="15" styleClass="filtros-container" stylesheets="@../css/filtro-form.css">
 
     <Label text="🔧 FILTROS EN INVENTARIO" styleClass="titulo"/>
 
     <HBox spacing="10">
-        <Button text="➕ NUEVO FILTRO" onAction="#abrirNuevoFiltro" styleClass="btn-nuevo"/>
-        <Button text="✏️ EDITAR" onAction="#editarFiltro" styleClass="btn-editar"/>
-        <Button text="🗑️ ELIMINAR" onAction="#eliminarFiltro" styleClass="btn-eliminar"/>
-        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <TextField fx:id="txtBuscar" promptText="🔍 Buscar filtro..." styleClass="buscador"/>
+        <Button fx:id="btnNuevo" text="➕ NUEVO FILTRO" onAction="#abrirNuevoFiltro" styleClass="btn-nuevo"/>
+        <Button fx:id="btnEditar" text="✏️ EDITAR" onAction="#editarFiltro" styleClass="btn-editar"/>
+        <Button fx:id="btnEliminar" text="🗑️ ELIMINAR" onAction="#eliminarFiltro" styleClass="btn-eliminar"/>
+        <Button fx:id="btnActualizar" text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+
+        <!-- Buscador con ComboBox -->
+        <HBox spacing="10" HBox.hgrow="ALWAYS">
+            <TextField fx:id="txtBuscar" promptText="🔍 Buscar filtro..." HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="buscador"/>
+            <ComboBox fx:id="cbCriterio" prefWidth="120" promptText="Criterio">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Nombre"/>
+                        <String fx:value="Código"/>
+                        <String fx:value="Rosca"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+        </HBox>
     </HBox>
 
     <TableView fx:id="tablaFiltros" VBox.vgrow="ALWAYS">

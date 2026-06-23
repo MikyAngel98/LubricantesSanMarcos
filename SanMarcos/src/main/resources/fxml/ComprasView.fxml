@@ -4,10 +4,14 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.Vista.controllers.ComprasController"
+      fx:controller="org.example.Vista.MainControllers.ComprasController"
       spacing="10" style="-fx-padding: 15; -fx-background-color: #f8f9fa;"
       stylesheets="@../css/compras.css"
       VBox.vgrow="ALWAYS">
+
+    <fx:define>
+        <ToggleGroup fx:id="pagoGrupo"/>
+    </fx:define>
 
     <Label text="📥 REGISTRO DE COMPRA" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
 
@@ -22,77 +26,132 @@
 
     <Separator/>
 
+    <!-- Botones de categoría -->
+    <HBox spacing="15">
+        <Button fx:id="btnAceites" text="🛢️ ACEITES" onAction="#cargarAceites" styleClass="btn-aceites" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="btnFiltros" text="🔧 FILTROS" onAction="#cargarFiltros" styleClass="btn-filtros" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="btnFocos" text="💡 FOCOS" onAction="#cargarFocos" styleClass="btn-focos" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="btnProductos" text="📦 PRODUCTOS" onAction="#cargarProductos" styleClass="btn-productos" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="txtBuscar" promptText="Buscar..." styleClass="buscador" prefWidth="200"/>
+    </HBox>
+
+    <Separator/>
+
     <HBox spacing="20" alignment="TOP_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
 
-        <!-- COLUMNA IZQUIERDA -->
-        <VBox spacing="10" HBox.hgrow="ALWAYS">
-
-            <HBox spacing="10">
-                <TextField fx:id="txtBuscar" promptText="Escriba nombre..." HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                <ComboBox fx:id="cbCategoria" prefWidth="150" promptText="Categoría"/>
-            </HBox>
+        <!-- COLUMNA IZQUIERDA - 65% -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS" prefWidth="0">
 
             <Label text="PRODUCTOS:" style="-fx-font-weight: bold;"/>
 
-            <TableView fx:id="tblProductos" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colNombre" text="Producto" prefWidth="180"/>
-                    <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
-                    <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="100"/>
-                    <TableColumn fx:id="colStock" text="Stock" prefWidth="60"/>
-                    <TableColumn fx:id="colPrecio" text="Precio Venta (Bs)" prefWidth="90"/>
-                </columns>
-            </TableView>
+            <ScrollPane fx:id="scrollTablas" VBox.vgrow="ALWAYS" fitToWidth="true" fitToHeight="false" prefWidth="0">
+                <StackPane fx:id="panelTablas" prefHeight="380">
 
-            <!-- Cantidad y Precio juntos -->
-            <GridPane hgap="10" vgap="8">
-                <Label text="CANTIDAD:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                <HBox spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
-                    <Button fx:id="btnDisminuir" text="-" styleClass="btn-mas-menos"/>
-                    <TextField fx:id="txtCantidad" text="1" prefWidth="60" styleClass="cantidad-field"/>
-                    <Button fx:id="btnAumentar" text="+" styleClass="btn-mas-menos"/>
-                </HBox>
+                    <!-- Tabla ACEITES -->
+                    <TableView fx:id="tablaAceites">
+                        <columns>
+                            <TableColumn fx:id="colAceiteId" text="ID" prefWidth="50"/>
+                            <TableColumn fx:id="colAceiteNombre" text="Nombre" prefWidth="180"/>
+                            <TableColumn fx:id="colAceiteViscosidad" text="Viscosidad" prefWidth="80"/>
+                            <TableColumn fx:id="colAceiteMarca" text="Marca" prefWidth="100"/>
+                            <TableColumn fx:id="colAceitePrecio" text="Precio (Bs)" prefWidth="90"/>
+                            <TableColumn fx:id="colAceiteStock" text="Stock" prefWidth="70"/>
+                            <TableColumn fx:id="colAceitePresentacion" text="Presentación" prefWidth="100"/>
+                            <TableColumn fx:id="colAceiteAgranel" text="A granel" prefWidth="70"/>
+                            <TableColumn fx:id="colAceiteTipo" text="Tipo" prefWidth="100"/>
+                            <TableColumn fx:id="colAceiteUso" text="Uso" prefWidth="100"/>
+                            <TableColumn fx:id="colAceiteDetalle" text="Detalle" prefWidth="200"/>
+                        </columns>
+                    </TableView>
 
-                <Label text="PRECIO COMPRA:" GridPane.rowIndex="0" GridPane.columnIndex="2" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txtPrecioCompra" prefWidth="100" promptText="0.00" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                    <!-- Tabla FILTROS -->
+                    <TableView fx:id="tablaFiltros">
+                        <columns>
+                            <TableColumn fx:id="colFiltroId" text="ID" prefWidth="50"/>
+                            <TableColumn fx:id="colFiltroNombre" text="Nombre" prefWidth="200"/>
+                            <TableColumn fx:id="colFiltroCodigo" text="Código" prefWidth="100"/>
+                            <TableColumn fx:id="colFiltroRosca" text="Rosca" prefWidth="100"/>
+                            <TableColumn fx:id="colFiltroMarca" text="Marca" prefWidth="100"/>
+                            <TableColumn fx:id="colFiltroStock" text="Stock" prefWidth="80"/>
+                            <TableColumn fx:id="colFiltroPrecio" text="Precio (Bs)" prefWidth="100"/>
+                            <TableColumn fx:id="colFiltroDetalle" text="Detalle" prefWidth="200"/>
+                        </columns>
+                    </TableView>
 
-                <Button fx:id="btnAgregar" text="➕ AGREGAR AL CARRITO" styleClass="btn-agregar"
-                        GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
-            </GridPane>
+                    <!-- Tabla FOCOS -->
+                    <TableView fx:id="tablaFocos">
+                        <columns>
+                            <TableColumn fx:id="colFocoId" text="ID" prefWidth="50"/>
+                            <TableColumn fx:id="colFocoNombre" text="Nombre" prefWidth="200"/>
+                            <TableColumn fx:id="colFocoCodigo" text="Código" prefWidth="100"/>
+                            <TableColumn fx:id="colFocoMarca" text="Marca" prefWidth="100"/>
+                            <TableColumn fx:id="colFocoStock" text="Stock" prefWidth="80"/>
+                            <TableColumn fx:id="colFocoPrecio" text="Precio (Bs)" prefWidth="100"/>
+                            <TableColumn fx:id="colFocoDetalle" text="Detalle" prefWidth="200"/>
+                        </columns>
+                    </TableView>
+
+                    <!-- Tabla PRODUCTOS BASE -->
+                    <TableView fx:id="tablaProductosBase">
+                        <columns>
+                            <TableColumn fx:id="colProdId" text="ID" prefWidth="50"/>
+                            <TableColumn fx:id="colProdNombre" text="Nombre" prefWidth="250"/>
+                            <TableColumn fx:id="colProdMarca" text="Marca" prefWidth="120"/>
+                            <TableColumn fx:id="colProdStock" text="Stock" prefWidth="80"/>
+                            <TableColumn fx:id="colProdPrecio" text="Precio (Bs)" prefWidth="100"/>
+                            <TableColumn fx:id="colProdDetalle" text="Detalle" prefWidth="250"/>
+                        </columns>
+                    </TableView>
+
+                </StackPane>
+            </ScrollPane>
+
+            <!-- Cantidad, Precio y Agregar -->
+            <Label text="CANTIDAD:" style="-fx-font-weight: bold;"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="btnDisminuir" text="-" prefWidth="40" styleClass="btn-mas-menos"/>
+                <TextField fx:id="txtCantidad" text="1" prefWidth="60" styleClass="cantidad-field"/>
+                <Button fx:id="btnAumentar" text="+" prefWidth="40" styleClass="btn-mas-menos"/>
+
+                <Label text="PRECIO COMPRA:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txtPrecioCompra" promptText="0.00" prefWidth="100" styleClass="precio-field"/>
+
+                <Button fx:id="btnAgregar" text="➕ AGREGAR AL CARRITO" styleClass="btn-agregar" prefWidth="180"/>
+            </HBox>
 
             <Label fx:id="lblProductoSeleccionado" text="" style="-fx-text-fill: #7f8c8d;"/>
         </VBox>
 
-        <!-- COLUMNA DERECHA - Carrito -->
-        <VBox spacing="10" HBox.hgrow="ALWAYS">
+        <!-- COLUMNA DERECHA - 35% Carrito -->
+        <VBox spacing="10" HBox.hgrow="NEVER" VBox.vgrow="ALWAYS" prefWidth="380" maxWidth="380">
+
             <Label text="CARRITO DE COMPRA:" style="-fx-font-weight: bold;"/>
 
-            <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS" prefHeight="0" prefWidth="360" maxWidth="360">
                 <columns>
-                    <TableColumn fx:id="colCarritoProducto" text="Producto" prefWidth="180"/>
-                    <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="70"/>
-                    <TableColumn fx:id="colCarritoPrecio" text="Precio Compra" prefWidth="90"/>
-                    <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="90"/>
+                    <TableColumn fx:id="colCarritoProducto" text="Producto" prefWidth="170"/>
+                    <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="60"/>
+                    <TableColumn fx:id="colCarritoPrecio" text="Precio" prefWidth="60"/>
+                    <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="65"/>
                 </columns>
             </TableView>
 
             <HBox spacing="10">
-                <Button fx:id="btnQuitar" text="❌ QUITAR SELECCIONADO" styleClass="btn-quitar"
-                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                <Button fx:id="btnLimpiarCarrito" text="🗑️ LIMPIAR TODO" styleClass="btn-limpiar"
-                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button fx:id="btnQuitar" text="❌ QUITAR" styleClass="btn-quitar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button fx:id="btnLimpiarCarrito" text="🗑️ LIMPIAR" styleClass="btn-limpiar" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
             </HBox>
 
             <Separator/>
 
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Label text="TOTAL:" styleClass="label-total"/>
-                <Label fx:id="lblTotal" text="Bs 0.00" styleClass="total-monto"/>
+                <Label text="TOTAL:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                <Label fx:id="lblTotal" text="Bs 0.00" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #27ae60;"/>
             </HBox>
 
             <Separator/>
 
-            <Button fx:id="btnRegistrar" text="📥 REGISTRAR COMPRA" maxWidth="Infinity" styleClass="btn-registrar"/>
+            <Button fx:id="btnRegistrar" text="📥 REGISTRAR COMPRA" maxWidth="Infinity" styleClass="btn-registrar" HBox.hgrow="ALWAYS"/>
         </VBox>
     </HBox>
 

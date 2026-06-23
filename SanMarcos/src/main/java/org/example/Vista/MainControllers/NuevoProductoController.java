@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.Modelo.jpa.Marca;
@@ -16,7 +17,6 @@ import org.example.Servicio.PresentacionService;
 import org.example.Servicio.ProductoService;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class NuevoProductoController {
@@ -270,7 +270,7 @@ public class NuevoProductoController {
             if (!esEdicion) {
                 limpiarFormulario();
             } else {
-                cerrarVentana();
+                cerrarPanel();
             }
         } catch (Exception e) {
             mostrarError("Error al guardar: " + e.getMessage());
@@ -450,11 +450,27 @@ public class NuevoProductoController {
         productoEditando = null;
     }
 
-    @FXML private void cancelar() { cerrarVentana(); }
+    @FXML
+    private void cancelar() {
+        cerrarPanel();
+    }
 
-    private void cerrarVentana() {
-        Stage stage = (Stage) txtNombre.getScene().getWindow();
-        stage.close();
+    private void cerrarPanel() {
+        // Obtener el StackPane central y limpiarlo
+        try {
+            StackPane panelCentral = (StackPane) txtNombre.getScene().lookup("#panelCentral");
+            if (panelCentral != null) {
+                panelCentral.getChildren().clear();
+                // Mostrar mensaje de bienvenida
+                Label bienvenida = new Label("Seleccione una opción del menú lateral");
+                bienvenida.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
+                panelCentral.getChildren().add(bienvenida);
+            }
+        } catch (Exception e) {
+            // Si falla, intentar cerrar la ventana como antes
+            Stage stage = (Stage) txtNombre.getScene().getWindow();
+            stage.close();
+        }
     }
 
     private void mostrarAlerta(String msg) { new Alert(Alert.AlertType.WARNING, msg).showAndWait(); }

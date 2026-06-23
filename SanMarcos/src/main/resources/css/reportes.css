@@ -1,0 +1,204 @@
+/* reportes.css - Estilos para la ventana de reportes */
+
+/* ==================== CONTENEDOR PRINCIPAL ==================== */
+
+.root {
+    -fx-background-color: #f8f9fa;
+}
+
+.titulo-reporte {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 10 0;
+}
+
+/* ==================== BOTONES ==================== */
+
+.btn-ventas {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-ventas:hover {
+    -fx-background-color: #3498db;
+}
+
+.btn-compras {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-compras:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.btn-mas-vendidos {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-mas-vendidos:hover {
+    -fx-background-color: #f39c12;
+}
+
+.btn-bajo-stock {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-bajo-stock:hover {
+    -fx-background-color: #c0392b;
+}
+
+.btn-consultar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 6 15;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-consultar:hover {
+    -fx-background-color: #5dade2;
+}
+
+.btn-ver-detalle {
+    -fx-background-color: #8e44ad;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-ver-detalle:hover {
+    -fx-background-color: #9b59b6;
+}
+
+.btn-exportar {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-exportar:hover {
+    -fx-background-color: #5dade2;
+}
+
+.btn-cerrar {
+    -fx-background-color: #7f8c8d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.btn-cerrar:hover {
+    -fx-background-color: #95a5a6;
+}
+
+.button:pressed {
+    -fx-translate-y: 1px;
+}
+
+/* ==================== TABLAS ==================== */
+
+.table-view {
+    -fx-border-color: #e2e8f0;
+    -fx-background-color: white;
+    -fx-border-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+    -fx-border-color: #2c3e50;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #5dade2;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+    -fx-padding: 8 5;
+}
+
+/* Alineación específica para columnas numéricas */
+.table-view .table-cell:last-column {
+    -fx-alignment: CENTER-RIGHT;
+}
+
+/* ==================== FILTROS ==================== */
+
+.panel-filtros {
+    -fx-padding: 10;
+    -fx-background-color: #ecf0f1;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.date-picker, .combo-box, .text-field {
+    -fx-pref-height: 32px;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.date-picker:focused, .combo-box:focused, .text-field:focused {
+    -fx-border-color: #3498db;
+    -fx-border-width: 1.5;
+}
+
+.label-filtro {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ==================== SEPARADOR ==================== */
+
+.separator {
+    -fx-padding: 5 0;
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.MainControllers.ReportesController"
+      spacing="15" style="-fx-padding: 15; -fx-background-color: #f8f9fa;"
+      stylesheets="@../css/reportes.css"
+      VBox.vgrow="ALWAYS">
+
+    <Label text="📊 REPORTES" styleClass="titulo-reporte"/>
+
+    <Separator/>
+
+    <!-- Botones principales -->
+    <HBox spacing="15">
+        <Button fx:id="btnVentas" text="📅 VENTAS POR FECHA" onAction="#abrirReporteVentas" styleClass="btn-ventas"/>
+        <Button fx:id="btnCompras" text="📦 COMPRAS POR FECHA" onAction="#abrirReporteCompras" styleClass="btn-compras"/>
+        <Button fx:id="btnMasVendidos" text="🏆 MÁS VENDIDOS" onAction="#abrirReporteMasVendidos" styleClass="btn-mas-vendidos"/>
+        <Button fx:id="btnBajoStock" text="⚠️ BAJO STOCK" onAction="#abrirReporteBajoStock" styleClass="btn-bajo-stock"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Panel de filtros (dinámico) -->
+    <HBox fx:id="panelFiltros" spacing="15" alignment="CENTER_LEFT" styleClass="panel-filtros">
+    </HBox>
+
+    <!-- Panel de tablas (StackPane para mostrar/ocultar) -->
+    <StackPane fx:id="panelTablas" VBox.vgrow="ALWAYS" prefHeight="400">
+
+        <!-- Tabla VENTAS -->
+        <TableView fx:id="tablaVentas" visible="true" managed="true">
+            <columns>
+                <TableColumn fx:id="colVentaId" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colVentaFecha" text="Fecha" prefWidth="100"/>
+                <TableColumn fx:id="colVentaCliente" text="Cliente" prefWidth="200"/>
+                <TableColumn fx:id="colVentaTipos" text="Tipos" prefWidth="60"/>
+                <TableColumn fx:id="colVentaTotal" text="Total (Bs)" prefWidth="100"/>
+                <TableColumn fx:id="colVentaMetodo" text="Método" prefWidth="100"/>
+            </columns>
+        </TableView>
+
+        <!-- Tabla COMPRAS -->
+        <TableView fx:id="tablaCompras" visible="false" managed="false">
+            <columns>
+                <TableColumn fx:id="colCompraId" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colCompraFecha" text="Fecha" prefWidth="100"/>
+                <TableColumn fx:id="colCompraProveedor" text="Proveedor" prefWidth="200"/>
+                <TableColumn fx:id="colCompraTipos" text="Tipos" prefWidth="60"/>
+                <TableColumn fx:id="colCompraTotal" text="Total (Bs)" prefWidth="100"/>
+            </columns>
+        </TableView>
+
+        <!-- Tabla MÁS VENDIDOS -->
+        <TableView fx:id="tablaMasVendidos" visible="false" managed="false">
+            <columns>
+                <TableColumn fx:id="colProdId" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colProdNombre" text="Producto" prefWidth="200"/>
+                <TableColumn fx:id="colProdCategoria" text="Categoría" prefWidth="100"/>
+                <TableColumn fx:id="colProdMarca" text="Marca" prefWidth="100"/>
+                <TableColumn fx:id="colProdVendido" text="Unidades" prefWidth="80"/>
+                <TableColumn fx:id="colProdFacturado" text="Facturado (Bs)" prefWidth="100"/>
+            </columns>
+        </TableView>
+
+        <!-- Tabla BAJO STOCK -->
+        <TableView fx:id="tablaBajoStock" visible="false" managed="false">
+            <columns>
+                <TableColumn fx:id="colStockId" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="colStockNombre" text="Producto" prefWidth="200"/>
+                <TableColumn fx:id="colStockCategoria" text="Categoría" prefWidth="100"/>
+                <TableColumn fx:id="colStockMarca" text="Marca" prefWidth="100"/>
+                <TableColumn fx:id="colStockCantidad" text="Stock" prefWidth="80"/>
+                <TableColumn fx:id="colStockPrecio" text="Precio (Bs)" prefWidth="80"/>
+            </columns>
+        </TableView>
+
+    </StackPane>
+
+    <Separator/>
+
+    <!-- Botones de acción -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="btnVerDetalle" text="🔍 VER DETALLE" onAction="#verDetalle" styleClass="btn-ver-detalle" disable="true"/>
+        <Button fx:id="btnExportar" text="📥 EXPORTAR PDF" onAction="#exportarReporte" styleClass="btn-exportar"/>
+        <Button fx:id="btnCerrar" text="🔒 CERRAR" onAction="#cerrarVentana" styleClass="btn-cerrar"/>
+    </HBox>
+
+</VBox>

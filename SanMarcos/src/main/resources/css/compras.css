@@ -5,7 +5,62 @@
     -fx-background-color: #f8f9fa;
 }
 
-/* Tablas */
+/* ==================== BOTONES DE CATEGORÍA ==================== */
+
+.btn-aceites {
+    -fx-background-color: #2980b9;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-aceites:hover {
+    -fx-background-color: #3498db;
+}
+
+.btn-filtros {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-filtros:hover {
+    -fx-background-color: #2ecc71;
+}
+
+.btn-focos {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-focos:hover {
+    -fx-background-color: #f39c12;
+}
+
+.btn-productos {
+    -fx-background-color: #8e44ad;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+.btn-productos:hover {
+    -fx-background-color: #9b59b6;
+}
+
+/* ==================== TABLAS ==================== */
+
 .table-view {
     -fx-border-color: #e2e8f0;
     -fx-background-color: white;
@@ -33,7 +88,19 @@
     -fx-text-fill: white;
 }
 
-/* Campos de texto */
+/* ==================== SCROLLPANE ==================== */
+
+.scroll-pane {
+    -fx-background-color: #f8f9fa;
+    -fx-background: #f8f9fa;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: #f8f9fa;
+}
+
+/* ==================== CAMPOS DE TEXTO ==================== */
+
 .text-field {
     -fx-pref-height: 32px;
     -fx-border-color: #e2e8f0;
@@ -46,12 +113,38 @@
     -fx-border-width: 1.5;
 }
 
-/* ComboBox */
+/* Campo de precio */
+.precio-field {
+    -fx-pref-height: 32px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-padding: 5 10;
+}
+
+/* Campo de cantidad centrado */
+.cantidad-field {
+    -fx-alignment: CENTER;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+}
+
+/* Buscador */
+.buscador {
+    -fx-pref-width: 200;
+    -fx-pref-height: 32px;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-padding: 5 10;
+}
+
+/* ==================== COMBOBOX ==================== */
+
 .combo-box {
     -fx-pref-height: 32px;
 }
 
-/* Botones */
+/* ==================== BOTONES GENERALES ==================== */
+
 .button {
     -fx-cursor: hand;
 }
@@ -114,7 +207,8 @@
     -fx-cursor: hand;
 }
 
-/* Etiqueta de total */
+/* ==================== ETIQUETAS ==================== */
+
 .label-total {
     -fx-font-weight: bold;
     -fx-font-size: 16px;
@@ -126,21 +220,8 @@
     -fx-text-fill: #27ae60;
 }
 
-/* Campo de cantidad centrado */
-.cantidad-field {
-    -fx-alignment: CENTER;
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 4;
-}
+/* ==================== SEPARADOR ==================== */
 
-/* Buscador */
-.buscador {
-    -fx-pref-height: 32px;
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 4;
-}
-
-/* Separador */
 .separator {
     -fx-padding: 5 0;
 }

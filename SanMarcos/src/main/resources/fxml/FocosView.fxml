@@ -4,16 +4,16 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.Vista.controllers.FocosController"
+      fx:controller="org.example.Vista.MainControllers.FocosController"
       spacing="15" styleClass="focos-container" stylesheets="@../css/focos.css">
 
     <Label text="💡 FOCOS EN INVENTARIO" styleClass="titulo"/>
 
     <HBox spacing="10">
-        <Button text="➕ NUEVO FOCO" onAction="#abrirNuevoFoco" styleClass="btn-nuevo"/>
-        <Button text="✏️ EDITAR" onAction="#editarFoco" styleClass="btn-editar"/>
-        <Button text="🗑️ ELIMINAR" onAction="#eliminarFoco" styleClass="btn-eliminar"/>
-        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Button fx:id="btnNuevo" text="➕ NUEVO FOCO" onAction="#abrirNuevoFoco" styleClass="btn-nuevo"/>
+        <Button fx:id="btnEditar" text="✏️ EDITAR" onAction="#editarFoco" styleClass="btn-editar"/>
+        <Button fx:id="btnEliminar" text="🗑️ ELIMINAR" onAction="#eliminarFoco" styleClass="btn-eliminar"/>
+        <Button fx:id="btnActualizar"  text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar foco..." styleClass="buscador"/>
     </HBox>

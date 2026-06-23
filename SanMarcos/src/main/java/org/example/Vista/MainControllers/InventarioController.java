@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.Modelo.pojo.*;
 import org.example.Servicio.ProductoService;
+import org.example.utils.SessionManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,12 +31,19 @@ public class InventarioController {
     @FXML private Label lblTotalProductos;
     @FXML private Label lblBajoStock;
 
+    // Botones
+    @FXML private Button btnNuevo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnEliminar;
+    @FXML private Button btnActualizar;
+
     private final ProductoService productoService = new ProductoService();
     private ObservableList<Producto> listaProductos = FXCollections.observableArrayList();
     private List<Producto> cacheProductos;
 
     @FXML
     public void initialize() {
+        aplicarPermisos();
         configurarTabla();
         cargarDatos();
         configurarBusqueda();
@@ -48,6 +56,9 @@ public class InventarioController {
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marcaNombre"));
         colDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
+
+        tablaProductos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+
         tablaProductos.setItems(listaProductos);
     }
 
@@ -55,6 +66,14 @@ public class InventarioController {
         cacheProductos = productoService.listarProductosBase();
         listaProductos.setAll(cacheProductos);
         actualizarEstado();
+    }
+
+    private void aplicarPermisos() {
+        boolean esVendedor = SessionManager.getInstance().isVendedor();
+
+        btnNuevo.setDisable(esVendedor);
+        btnEditar.setDisable(esVendedor);
+        btnEliminar.setDisable(esVendedor);
     }
 
     private void configurarBusqueda() {

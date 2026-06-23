@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

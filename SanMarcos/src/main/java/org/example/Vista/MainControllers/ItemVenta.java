@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 public class ItemVenta {
     private int idProducto;

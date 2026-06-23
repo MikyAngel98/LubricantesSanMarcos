@@ -4,17 +4,17 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.Vista.controllers.InventarioController"
+      fx:controller="org.example.Vista.MainControllers.InventarioController"
       spacing="15" styleClass="inventario-container" stylesheets="@../css/inventario.css">
 
     <Label text="📦 INVENTARIO DE PRODUCTOS" styleClass="titulo"/>
 
     <!-- Barra de herramientas con EDITAR y ELIMINAR -->
     <HBox spacing="10">
-        <Button text="➕ NUEVO PRODUCTO" onAction="#abrirNuevoProducto" styleClass="btn-nuevo"/>
-        <Button text="✏️ EDITAR" onAction="#editarProducto" styleClass="btn-editar"/>
-        <Button text="🗑️ ELIMINAR" onAction="#eliminarProducto" styleClass="btn-eliminar"/>
-        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Button fx:id="btnNuevo" text="➕ NUEVO PRODUCTO" onAction="#abrirNuevoProducto" styleClass="btn-nuevo"/>
+        <Button fx:id="btnEditar" text="✏️ EDITAR" onAction="#editarProducto" styleClass="btn-editar"/>
+        <Button fx:id="btnEliminar" text="🗑️ ELIMINAR" onAction="#eliminarProducto" styleClass="btn-eliminar"/>
+        <Button fx:id="btnActualizar" text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar producto..." styleClass="buscador"/>
     </HBox>

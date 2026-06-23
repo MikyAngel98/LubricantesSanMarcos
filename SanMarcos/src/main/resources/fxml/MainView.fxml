@@ -7,20 +7,42 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.Vista.controllers.MainController"
+            fx:controller="org.example.Vista.MainControllers.MainController"
             stylesheets="@../css/main.css">
 
     <!-- TOP: Header -->
     <top>
         <VBox>
-            <Label text="LUBRICANTES SAN MARCOS" styleClass="header" alignment="CENTER" maxWidth="Infinity"/>
+            <!-- Header con 3 secciones usando BorderPane -->
+            <BorderPane styleClass="header-container">
+
+                <!-- Izquierda: Usuario y fecha -->
+                <left>
+                    <VBox spacing="2" alignment="CENTER_LEFT">
+                        <Label fx:id="lblUsuario" text="👤 No autenticado" styleClass="header-usuario"/>
+                        <Label fx:id="lblFecha" styleClass="header-fecha"/>
+                    </VBox>
+                </left>
+
+                <!-- Centro: Título -->
+                <center>
+                    <Label text="LUBRICANTES SAN MARCOS" styleClass="header-titulo" alignment="CENTER"/>
+                </center>
+
+                <!-- Derecha: Botón Login -->
+                <right>
+                    <Button fx:id="btnLogin" text="🔓 INICIAR SESIÓN" onAction="#abrirLogin"
+                            styleClass="btn-login"/>
+                </right>
+
+            </BorderPane>
             <Separator/>
         </VBox>
     </top>
 
     <!-- LEFT: Menú lateral -->
     <left>
-        <VBox spacing="8" styleClass="menu-lateral" prefWidth="260">
+        <VBox fx:id="menuLateral" spacing="8" styleClass="menu-lateral" prefWidth="260">
             <Button text="📦 INVENTARIO - PRODUCTOS" styleClass="btn-menu" onAction="#abrirInventario"/>
             <Button text="🛢️ ACEITES" styleClass="btn-menu" onAction="#abrirAceites"/>
             <Button text="🔧 FILTROS" styleClass="btn-menu" onAction="#abrirFiltros"/>
@@ -51,14 +73,5 @@
             <Label text="Seleccione una opción del menú lateral" styleClass="bienvenida"/>
         </StackPane>
     </center>
-
-    <!-- BOTTOM: Footer -->
-    <bottom>
-        <HBox styleClass="footer">
-            <Label text="👤 Usuario: Administrador" styleClass="footer-texto"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="lblFecha" styleClass="footer-fecha"/>
-        </HBox>
-    </bottom>
 
 </BorderPane>

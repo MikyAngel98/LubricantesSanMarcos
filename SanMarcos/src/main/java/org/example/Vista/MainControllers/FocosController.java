@@ -1,4 +1,4 @@
-package org.example.Vista.controllers;
+package org.example.Vista.MainControllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,8 +10,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.Modelo.pojo.Foco;
-import org.example.Modelo.pojo.Producto;
 import org.example.Servicio.ProductoService;
+import org.example.utils.SessionManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,12 +31,19 @@ public class FocosController {
     @FXML private TextField txtBuscar;
     @FXML private Label lblTotal;
 
+    // Botones
+    @FXML private Button btnNuevo;
+    @FXML private Button btnEditar;
+    @FXML private Button btnEliminar;
+    @FXML private Button btnActualizar;
+
     private final ProductoService productoService = new ProductoService();
     private ObservableList<Foco> listaFocos = FXCollections.observableArrayList();
     private List<Foco> cacheFocos;
 
     @FXML
     public void initialize() {
+        aplicarPermisos();
         configurarTabla();
         cargarDatos();
         configurarBusqueda();
@@ -51,7 +58,17 @@ public class FocosController {
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
         colDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
 
+        tablaFocos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_LAST_COLUMN);
+
         tablaFocos.setItems(listaFocos);
+    }
+
+    private void aplicarPermisos() {
+        boolean esVendedor = SessionManager.getInstance().isVendedor();
+
+        btnNuevo.setDisable(esVendedor);
+        btnEditar.setDisable(esVendedor);
+        btnEliminar.setDisable(esVendedor);
     }
 
     private void cargarDatos() {

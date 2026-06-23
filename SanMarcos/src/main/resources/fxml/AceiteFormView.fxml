@@ -4,16 +4,16 @@
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.Vista.controllers.AceiteFormController"
+      fx:controller="org.example.Vista.MainControllers.AceiteFormController"
       spacing="15" styleClass="aceites-container" stylesheets="@../css/aceite-form.css">
 
     <Label text="🛢️ ACEITES EN INVENTARIO" styleClass="titulo"/>
 
     <HBox spacing="10">
-        <Button text="➕ NUEVO ACEITE" onAction="#abrirNuevoAceite" styleClass="btn-nuevo"/>
-        <Button text="✏️ EDITAR" onAction="#editarAceite" styleClass="btn-editar"/>
-        <Button text="🗑️ ELIMINAR" onAction="#eliminarAceite" styleClass="btn-eliminar"/>
-        <Button text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
+        <Button fx:id="btnNuevo" text="➕ NUEVO ACEITE" onAction="#abrirNuevoAceite" styleClass="btn-nuevo"/>
+        <Button fx:id="btnEditar" text="✏️ EDITAR" onAction="#editarAceite" styleClass="btn-editar"/>
+        <Button fx:id="btnEliminar" text="🗑️ ELIMINAR" onAction="#eliminarAceite" styleClass="btn-eliminar"/>
+        <Button fx:id="btnActualizar" text="🔄 ACTUALIZAR" onAction="#actualizarTabla" styleClass="btn-actualizar"/>
         <Region HBox.hgrow="ALWAYS"/>
         <TextField fx:id="txtBuscar" promptText="🔍 Buscar aceite..." styleClass="buscador"/>
     </HBox>

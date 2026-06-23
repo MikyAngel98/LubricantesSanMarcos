@@ -101,3 +101,60 @@
 .btn-actualizar:hover {
     -fx-background-color: #5dade2;
 }
+
+/* ==================== COMBOBOX ==================== */
+
+.combo-box {
+    -fx-pref-height: 32px;
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.combo-box:focused {
+    -fx-border-color: #5dade2;
+    -fx-border-width: 1.5;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 5 10;
+    -fx-text-fill: #2c3e50;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: white;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #2c3e50;
+}
+
+/* Estilo para el prompt text (cuando no hay selección) */
+.combo-box .text-input {
+    -fx-text-fill: #7f8c8d;
+}
+
+/* Estilo para las opciones desplegables */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box-popup .list-cell {
+    -fx-padding: 8 10;
+    -fx-text-fill: #2c3e50;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #ebf5fb;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #5dade2;
+    -fx-text-fill: white;
+}

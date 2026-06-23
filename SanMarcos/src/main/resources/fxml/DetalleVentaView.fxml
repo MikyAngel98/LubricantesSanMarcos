@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.Vista.MainControllers.DetalleVentaController"
+      spacing="10" style="-fx-padding: 15; -fx-background-color: #f8f9fa;"
+      stylesheets="@../css/detalle.css">
+
+    <Label fx:id="lblTitulo" text="📋 DETALLE DE VENTA" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+    <Separator/>
+
+    <!-- Información de la venta -->
+    <GridPane hgap="15" vgap="8">
+        <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="lblFecha" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Cliente:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="lblCliente" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Método de pago:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="lblMetodoPago" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <Separator/>
+
+    <Label text="PRODUCTOS:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2980b9;"/>
+
+    <!-- Tabla de productos con más columnas -->
+    <TableView fx:id="tablaProductos" VBox.vgrow="ALWAYS" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="colProducto" text="Producto" prefWidth="180"/>
+            <TableColumn fx:id="colViscosidad" text="Viscosidad" prefWidth="80"/>
+            <TableColumn fx:id="colCodigo" text="Código" prefWidth="100"/>
+            <TableColumn fx:id="colMarca" text="Marca" prefWidth="100"/>
+            <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="100"/>
+            <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="70"/>
+            <TableColumn fx:id="colPrecio" text="Precio (Bs)" prefWidth="90"/>
+            <TableColumn fx:id="colSubtotal" text="Subtotal (Bs)" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <Separator/>
+
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Label text="TOTAL:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label fx:id="lblTotal" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #27ae60;"/>
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <Button fx:id="btnExportar" text="📥 EXPORTAR PDF" onAction="#exportarPDF"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-cursor: hand;"/>
+        <Button fx:id="btnCerrar" text="📄 CERRAR" onAction="#cerrarVentana"
+                style="-fx-background-color: #7f8c8d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20; -fx-cursor: hand;"/>
+    </HBox>
+
+</VBox>
