@@ -5,12 +5,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.DTO.DetalleVentaDTO;
 import org.example.DTO.VentaInfoDTO;
 import org.example.Servicio.PdfExportService;
 import org.example.Servicio.ReporteService;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -75,8 +77,30 @@ public class DetalleVentaController {
 
     @FXML
     private void exportarPDF() {
-        // Implementar exportación con nuevos datos
-        mostrarInfo("Exportación a PDF en desarrollo");
+        try {
+            pdfService.exportarDetalleVenta(
+                    idVenta,
+                    tablaProductos.getItems(),
+                    infoVenta.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                    infoVenta.getCliente(),
+                    infoVenta.getMetodoPago(),
+                    total,
+                    elegirUbicacion("detalle_venta_" + idVenta + ".pdf")  // ← Agregar FileChooser
+            );
+            mostrarInfo("PDF exportado correctamente");
+        } catch (Exception e) {
+            mostrarError("Error al exportar PDF: " + e.getMessage());
+        }
+    }
+    private String elegirUbicacion(String nombreSugerido) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar PDF");
+        fileChooser.setInitialFileName(nombreSugerido);
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf")
+        );
+        File archivo = fileChooser.showSaveDialog(btnExportar.getScene().getWindow());
+        return archivo != null ? archivo.getAbsolutePath() : null;
     }
 
     @FXML
@@ -87,5 +111,9 @@ public class DetalleVentaController {
 
     private void mostrarInfo(String msg) {
         new Alert(Alert.AlertType.INFORMATION, msg).showAndWait();
+    }
+
+    private void mostrarError(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg).showAndWait();
     }
 }

@@ -5,10 +5,13 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.example.DTO.*;
+import org.example.Modelo.pojo.Venta;
+import org.example.Vista.MainControllers.ItemVenta;
 
 import java.awt.Color;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -38,12 +41,22 @@ public class PdfExportService {
         return cell;
     }
 
+    // Celda con texto alineado a la izquierda
     private PdfPCell createCell(String text) {
         PdfPCell cell = new PdfPCell(new Phrase(text, getNormalFont()));
         cell.setPadding(5);
         return cell;
     }
 
+    // Celda con texto centrado
+    private PdfPCell createCellCenter(String text) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, getNormalFont()));
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setPadding(5);
+        return cell;
+    }
+
+    // Celda con texto alineado a la derecha
     private PdfPCell createCellRight(String text) {
         PdfPCell cell = new PdfPCell(new Phrase(text, getNormalFont()));
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
@@ -231,39 +244,54 @@ public class PdfExportService {
 
     // ==================== EXPORTAR DETALLE DE VENTA ====================
 
-    public void exportarDetalleVenta(int idVenta, List<DetalleVentaDTO> detalles, String fecha, String cliente, String metodoPago, float total, String ruta) throws Exception {
-        Document document = new Document(PageSize.A4);
+    public void exportarDetalleVenta(int idVenta, List<DetalleVentaDTO> detalles, String fecha,
+                                     String cliente, String metodoPago, float total, String ruta) throws Exception {
+        Document document = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(document, new FileOutputStream(ruta));
         document.open();
 
+        // Título
         Paragraph titulo = new Paragraph("DETALLE DE VENTA #" + idVenta, getTitleFont());
         titulo.setAlignment(Element.ALIGN_CENTER);
         document.add(titulo);
 
+        // Información de la venta
         document.add(new Paragraph(" "));
         document.add(new Paragraph("Fecha: " + fecha));
         document.add(new Paragraph("Cliente: " + cliente));
         document.add(new Paragraph("Método de pago: " + metodoPago));
         document.add(new Paragraph(" "));
 
-        PdfPTable table = new PdfPTable(4);
+        // Tabla con TODAS las columnas
+        PdfPTable table = new PdfPTable(8);  // ← 8 columnas
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{4, 1, 2, 2});
+        table.setWidths(new float[]{3, 2, 2, 2, 2, 2, 2, 2});
 
+        // Encabezados
         table.addCell(createHeaderCell("Producto"));
+        table.addCell(createHeaderCell("Viscosidad"));
+        table.addCell(createHeaderCell("Código"));
+        table.addCell(createHeaderCell("Marca"));
+        table.addCell(createHeaderCell("Categoría"));
         table.addCell(createHeaderCell("Cantidad"));
         table.addCell(createHeaderCell("Precio"));
         table.addCell(createHeaderCell("Subtotal"));
 
+        // Datos
         for (DetalleVentaDTO d : detalles) {
-            table.addCell(createCell(d.getProducto()));
-            table.addCell(createCell(String.format("%.2f", d.getCantidad())));
-            table.addCell(createCellRight(String.format("%.2f", d.getPrecioVenta())));
-            table.addCell(createCellRight(String.format("%.2f", d.getSubtotal())));
+            table.addCell(createCell(d.getProducto() != null ? d.getProducto() : ""));
+            table.addCell(createCellCenter(d.getViscosidad() != null ? d.getViscosidad() : ""));
+            table.addCell(createCellCenter(d.getCodigo() != null ? d.getCodigo() : ""));
+            table.addCell(createCellCenter(d.getMarca() != null ? d.getMarca() : ""));
+            table.addCell(createCell(d.getCategoria() != null ? d.getCategoria() : ""));
+            table.addCell(createCellCenter(String.format("%.2f", d.getCantidad())));
+            table.addCell(createCellCenter(String.format("%.2f", d.getPrecioVenta())));
+            table.addCell(createCellCenter(String.format("%.2f", d.getSubtotal())));
         }
 
         document.add(table);
 
+        // Total
         document.add(new Paragraph(" "));
         Paragraph totalP = new Paragraph("TOTAL: Bs " + String.format("%.2f", total), getTitleFont());
         totalP.setAlignment(Element.ALIGN_RIGHT);
@@ -274,8 +302,9 @@ public class PdfExportService {
 
     // ==================== EXPORTAR DETALLE DE COMPRA ====================
 
-    public void exportarDetalleCompra(int idCompra, List<DetalleCompraDTO> detalles, String fecha, String proveedor, float total, String ruta) throws Exception {
-        Document document = new Document(PageSize.A4);
+    public void exportarDetalleCompra(int idCompra, List<DetalleCompraDTO> detalles, String fecha,
+                                      String proveedor, float total, String ruta) throws Exception {
+        Document document = new Document(PageSize.A4.rotate());
         PdfWriter.getInstance(document, new FileOutputStream(ruta));
         document.open();
 
@@ -288,20 +317,29 @@ public class PdfExportService {
         document.add(new Paragraph("Proveedor: " + proveedor));
         document.add(new Paragraph(" "));
 
-        PdfPTable table = new PdfPTable(4);
+        // Tabla con TODAS las columnas
+        PdfPTable table = new PdfPTable(8);
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{4, 1, 2, 2});
+        table.setWidths(new float[]{3, 2, 2, 2, 2, 2, 2, 2});
 
         table.addCell(createHeaderCell("Producto"));
+        table.addCell(createHeaderCell("Viscosidad"));
+        table.addCell(createHeaderCell("Código"));
+        table.addCell(createHeaderCell("Marca"));
+        table.addCell(createHeaderCell("Categoría"));
         table.addCell(createHeaderCell("Cantidad"));
         table.addCell(createHeaderCell("Precio"));
         table.addCell(createHeaderCell("Subtotal"));
 
         for (DetalleCompraDTO d : detalles) {
-            table.addCell(createCell(d.getProducto()));
-            table.addCell(createCell(String.format("%.2f", d.getCantidad())));
-            table.addCell(createCellRight(String.format("%.2f", d.getPrecioCompra())));
-            table.addCell(createCellRight(String.format("%.2f", d.getSubtotal())));
+            table.addCell(createCell(d.getProducto() != null ? d.getProducto() : ""));
+            table.addCell(createCellCenter(d.getViscosidad() != null ? d.getViscosidad() : ""));
+            table.addCell(createCellCenter(d.getCodigo() != null ? d.getCodigo() : ""));
+            table.addCell(createCellCenter(d.getMarca() != null ? d.getMarca() : ""));
+            table.addCell(createCell(d.getCategoria() != null ? d.getCategoria() : ""));
+            table.addCell(createCellCenter(String.format("%.2f", d.getCantidad())));
+            table.addCell(createCellCenter(String.format("%.2f", d.getPrecioCompra())));
+            table.addCell(createCellCenter(String.format("%.2f", d.getSubtotal())));
         }
 
         document.add(table);
@@ -310,6 +348,83 @@ public class PdfExportService {
         Paragraph totalP = new Paragraph("TOTAL: Bs " + String.format("%.2f", total), getTitleFont());
         totalP.setAlignment(Element.ALIGN_RIGHT);
         document.add(totalP);
+
+        document.close();
+    }
+
+    // ==================== RECIBO DE VENTA ====================
+
+    public void generarReciboVenta(Venta venta, List<ItemVenta> items, String ruta, String nombreCliente) throws Exception {
+        Document document = new Document(PageSize.A5);
+        PdfWriter.getInstance(document, new FileOutputStream(ruta));
+        document.open();
+
+        // Fuentes
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
+        Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
+        Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+
+        // Encabezado
+        Paragraph recibo = new Paragraph("RECIBO DE VENTA", titleFont);
+        recibo.setAlignment(Element.ALIGN_CENTER);
+        document.add(recibo);
+
+        // Encabezado
+        Paragraph titulo = new Paragraph("LUBRICANTES SAN MARCOS", boldFont);
+        titulo.setAlignment(Element.ALIGN_CENTER);
+        document.add(titulo);
+
+        document.add(new Paragraph(" "));
+
+        // Información de la venta
+        document.add(new Paragraph("N° Venta: " + venta.getId(), normalFont));
+        document.add(new Paragraph("Fecha/Hora: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")), normalFont));
+        document.add(new Paragraph("Cliente: " + nombreCliente, normalFont));
+        document.add(new Paragraph("Método de pago: " + venta.getMetodoPago(), normalFont));
+
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph("Detalles de Venta:", boldFont));
+        document.add(new Paragraph(" "));
+
+        // Tabla de productos
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{3, 2, 1, 2, 2});
+
+        // Encabezados
+        table.addCell(createHeaderCell("Producto"));
+        table.addCell(createHeaderCell("Marca"));
+        table.addCell(createHeaderCell("Cant"));
+        table.addCell(createHeaderCell("Precio"));
+        table.addCell(createHeaderCell("Subtotal"));
+
+        float total = 0;
+        for (ItemVenta item : items) {
+            table.addCell(createCell(item.getNombreProducto()));
+            table.addCell(createCell(item.getMarcaProducto()));
+            table.addCell(createCellCenter(String.format("%.2f", item.getCantidad())));
+            table.addCell(createCellCenter(String.format("%.2f", item.getPrecio())));
+            table.addCell(createCellRight(String.format("%.2f", item.getSubtotal())));
+            total += item.getSubtotal();
+        }
+
+        document.add(table);
+
+        document.add(new Paragraph("----------------------------------------", normalFont));
+
+        // Total
+        Paragraph totalP = new Paragraph("TOTAL: Bs " + String.format("%.2f", total), boldFont);
+        totalP.setAlignment(Element.ALIGN_RIGHT);
+        document.add(totalP);
+
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
+
+        // Pie
+        Paragraph gracias = new Paragraph("¡Gracias por su compra!", normalFont);
+        gracias.setAlignment(Element.ALIGN_CENTER);
+        document.add(gracias);
+
 
         document.close();
     }

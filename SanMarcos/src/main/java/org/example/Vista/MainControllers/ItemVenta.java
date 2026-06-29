@@ -3,13 +3,15 @@ package org.example.Vista.MainControllers;
 public class ItemVenta {
     private int idProducto;
     private String nombreProducto;
+    private String marcaProducto;
     private float cantidad;
     private float precio;
     private float subtotal;
 
-    public ItemVenta(int idProducto, String nombreProducto, float cantidad, float precio) {
+    public ItemVenta(int idProducto, String nombreProducto, String marcaProducto, float cantidad, float precio) {
         this.idProducto = idProducto;
         this.nombreProducto = nombreProducto;
+        this.marcaProducto = marcaProducto;
         this.cantidad = cantidad;
         this.precio = precio;
         calcularSubtotal();
@@ -20,6 +22,8 @@ public class ItemVenta {
     }
 
     // Getters y Setters
+    public String getMarcaProducto() { return marcaProducto; }
+    public void setMarcaProducto(String marcaProducto) { this.marcaProducto = marcaProducto; }
     public int getIdProducto() { return idProducto; }
     public void setIdProducto(int idProducto) { this.idProducto = idProducto; }
     public String getNombreProducto() { return nombreProducto; }

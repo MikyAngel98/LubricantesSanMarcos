@@ -17,7 +17,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("Lubricante San Marcos - Sistema de Gestión");
         primaryStage.setScene(scene);
         primaryStage.setMaximized(true);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 

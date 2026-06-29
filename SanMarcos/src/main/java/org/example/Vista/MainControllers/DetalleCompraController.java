@@ -5,12 +5,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.DTO.CompraInfoDTO;
 import org.example.DTO.DetalleCompraDTO;
 import org.example.Servicio.PdfExportService;
 import org.example.Servicio.ReporteService;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -78,18 +80,32 @@ public class DetalleCompraController {
     @FXML
     private void exportarPDF() {
         try {
+            String ruta = elegirUbicacion("detalle_compra_" + idCompra + ".pdf");
+            if (ruta == null) return; // Usuario canceló
+
             pdfService.exportarDetalleCompra(
                     idCompra,
                     tablaProductos.getItems(),
-                    infoCompra != null ? infoCompra.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "",
-                    infoCompra != null ? infoCompra.getProveedor() : "",
+                    infoCompra.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                    infoCompra.getProveedor(),
                     total,
-                    System.getProperty("user.home") + "/Desktop/detalle_compra_" + idCompra + ".pdf"
+                    ruta
             );
-            mostrarInfo("PDF exportado en el escritorio");
+            mostrarInfo("PDF exportado correctamente");
         } catch (Exception e) {
             mostrarError("Error al exportar PDF: " + e.getMessage());
         }
+    }
+
+    private String elegirUbicacion(String nombreSugerido) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar PDF");
+        fileChooser.setInitialFileName(nombreSugerido);
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf")
+        );
+        File archivo = fileChooser.showSaveDialog(btnExportar.getScene().getWindow());
+        return archivo != null ? archivo.getAbsolutePath() : null;
     }
 
     @FXML

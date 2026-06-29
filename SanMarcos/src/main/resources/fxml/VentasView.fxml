@@ -123,9 +123,10 @@
 
             <Label text="CARRITO DE COMPRAS:" style="-fx-font-weight: bold;"/>
 
-            <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS" prefHeight="0" prefWidth="360" maxWidth="360">
+            <TableView fx:id="tblCarrito" VBox.vgrow="ALWAYS" prefHeight="0" prefWidth="370" maxWidth="370">
                 <columns>
-                    <TableColumn fx:id="colCarritoProducto" text="Producto" prefWidth="170"/>
+                    <TableColumn fx:id="colCarritoProducto" text="Producto" prefWidth="150"/>
+                    <TableColumn fx:id="colCarritoMarca" text="Marca" prefWidth="80"/>
                     <TableColumn fx:id="colCarritoCantidad" text="Cantidad" prefWidth="60"/>
                     <TableColumn fx:id="colCarritoPrecio" text="Precio" prefWidth="60"/>
                     <TableColumn fx:id="colCarritoSubtotal" text="Subtotal" prefWidth="65"/>

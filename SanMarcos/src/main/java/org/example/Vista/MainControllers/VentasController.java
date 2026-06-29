@@ -6,14 +6,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import org.example.Modelo.jpa.Cliente;
 import org.example.Modelo.jpa.Contacto;
 import org.example.Modelo.jpa.Persona;
 import org.example.Modelo.pojo.*;
 import org.example.Servicio.ClienteService;
+import org.example.Servicio.PdfExportService;
 import org.example.Servicio.ProductoService;
 import org.example.Servicio.VentaService;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +85,7 @@ public class VentasController {
     // Carrito
     @FXML private TableView<ItemVenta> tblCarrito;
     @FXML private TableColumn<ItemVenta, String> colCarritoProducto;
+    @FXML private TableColumn<ItemVenta, String> colCarritoMarca;
     @FXML private TableColumn<ItemVenta, Float> colCarritoCantidad;
     @FXML private TableColumn<ItemVenta, Float> colCarritoPrecio;
     @FXML private TableColumn<ItemVenta, Float> colCarritoSubtotal;
@@ -96,6 +100,7 @@ public class VentasController {
     private final ProductoService productoService = new ProductoService();
     private final VentaService ventaService = new VentaService();
     private final ClienteService clienteService = new ClienteService();
+    private final PdfExportService pdfExportService = new PdfExportService();
 
     private ObservableList<ItemVenta> itemsCarrito = FXCollections.observableArrayList();
 
@@ -143,6 +148,7 @@ public class VentasController {
 
     private void configurarCarrito() {
         colCarritoProducto.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
+        colCarritoMarca.setCellValueFactory(new PropertyValueFactory<>("marcaProducto"));
         colCarritoCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colCarritoPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colCarritoSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
@@ -409,15 +415,6 @@ public class VentasController {
         try {
             cantidad = Float.parseFloat(txtCantidad.getText().trim());
             if (cantidad <= 0) throw new NumberFormatException();
-
-            // Validación según tipo
-            if (productoSeleccionado instanceof Aceite && !aceiteSeleccionadoEsGranel) {
-                // No es granel: debe ser entero
-                if (cantidad != (int) cantidad) {
-                    mostrarAlerta("Este producto solo se vende por unidad entera");
-                    return;
-                }
-            }
         } catch (NumberFormatException e) {
             mostrarAlerta("Cantidad inválida");
             return;
@@ -432,6 +429,10 @@ public class VentasController {
         int idProducto = productoSeleccionado.getId();
         String nombre = productoSeleccionado.getNombre();
 
+        // OBTENER MARCA
+        String marca = productoSeleccionado.getMarcaNombre() != null ?
+                productoSeleccionado.getMarcaNombre() : "N/A";
+
         for (ItemVenta item : itemsCarrito) {
             if (item.getIdProducto() == idProducto) {
                 item.setCantidad(item.getCantidad() + cantidad);
@@ -442,7 +443,7 @@ public class VentasController {
             }
         }
 
-        ItemVenta nuevoItem = new ItemVenta(idProducto, nombre, cantidad, precio);
+        ItemVenta nuevoItem = new ItemVenta(idProducto, nombre, marca, cantidad, precio);
         itemsCarrito.add(nuevoItem);
         calcularTotal();
     }
@@ -509,6 +510,12 @@ public class VentasController {
         String metodoPago = rbEfectivo.isSelected() ? "EFECTIVO" : "QR";
         Integer idCliente = registrarClienteOpcional();
 
+        // Obtener nombre del cliente
+        String nombreCliente = txtClienteNombre.getText().trim();
+        if (nombreCliente.isEmpty()) {
+            nombreCliente = "S/N";
+        }
+
         Venta venta = new Venta();
         venta.setFecha(LocalDate.now());
 
@@ -529,19 +536,77 @@ public class VentasController {
 
         try {
             ventaService.registrarVenta(venta);
+
+            List<ItemVenta> copiaCarrito = new ArrayList<>(itemsCarrito);
+
             String clienteInfo = (idCliente != null) ? "\nCliente: " + txtClienteNombre.getText() : "";
-            mostrarInfo("✅ Venta registrada correctamente\nMétodo de pago: " + metodoPago + clienteInfo);
-            limpiarCarrito();
-            txtClienteNombre.clear();
-            txtClienteCelular.clear();
+            mostrarInfoConRecibo("✅ Venta registrada correctamente\nMétodo de pago: " + metodoPago + clienteInfo, venta, copiaCarrito, nombreCliente);
 
-            // Recargar datos para actualizar el stock
-            cargarCacheCompleto();
-
-            // Recargar la tabla actual
-            cargarAceites();
         } catch (Exception e) {
             mostrarError("Error al registrar venta: " + e.getMessage());
+        }
+    }
+
+    private void mostrarInfoConRecibo(String mensaje, Venta venta, List<ItemVenta> itemsCarrito, String nombreCliente) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Venta registrada");
+        alert.setHeaderText(mensaje);
+        alert.setContentText("¿Desea generar el recibo de venta?");
+
+        ButtonType btnSi = new ButtonType("Sí, generar recibo");
+        ButtonType btnNo = new ButtonType("No, gracias");
+
+        alert.getButtonTypes().setAll(btnSi, btnNo);
+
+        if (alert.showAndWait().get() == btnSi) {
+            generarRecibo(venta, itemsCarrito, nombreCliente);
+        }
+
+        // Limpiar carrito después de la decisión del recibo
+        limpiarCarrito();
+        txtClienteNombre.clear();
+        txtClienteCelular.clear();
+        txtCantidad.setText("1");
+        cargarCacheCompleto();
+        cargarAceites();
+    }
+
+    private void generarRecibo(Venta venta, List<ItemVenta> items, String nombreCliente) {
+        try {
+            String rutaEscritorio = System.getProperty("user.home") + "/Desktop";
+            String rutaCarpeta = rutaEscritorio + "/Ventas San Marcos";
+
+            File carpeta = new File(rutaCarpeta);
+            if (!carpeta.exists()) {
+                carpeta.mkdir();
+            }
+
+            String nombreArchivo = "recibo_venta_" + venta.getId() + ".pdf";
+            String rutaCompleta = rutaCarpeta + "/" + nombreArchivo;
+
+            pdfExportService.generarReciboVenta(venta, items, rutaCompleta, nombreCliente);
+            mostrarInfo("✅ Recibo guardado en:\n" + rutaCompleta);
+
+            try {
+                java.awt.Desktop.getDesktop().open(carpeta);
+            } catch (Exception ex) {
+                // No se pudo abrir la carpeta
+            }
+
+        } catch (Exception e) {
+            mostrarError("Error al generar recibo: " + e.getMessage());
+        }
+    }
+
+    // Méetodo para abrir la carpeta en el explorador de archivos (opcional)
+    private void abrirCarpeta(String ruta) {
+        try {
+            File carpeta = new File(ruta);
+            if (carpeta.exists()) {
+                java.awt.Desktop.getDesktop().open(carpeta);
+            }
+        } catch (Exception e) {
+            System.err.println("No se pudo abrir la carpeta: " + e.getMessage());
         }
     }
 
