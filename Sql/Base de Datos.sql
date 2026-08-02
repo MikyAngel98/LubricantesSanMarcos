@@ -111,6 +111,7 @@ create table Venta(
 	Fecha date DEFAULT GETDATE(),
 	Total decimal(10,2) not null,
 	IdCliente int null,
+	MetodoPago varchar(20) null,
 	foreign key (IdCliente) references Cliente(Id)
 );
 

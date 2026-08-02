@@ -19,8 +19,11 @@ import org.example.Servicio.VentaService;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 public class VentasController {
 
@@ -109,14 +112,21 @@ public class VentasController {
     private List<Foco> cacheFocos = new ArrayList<>();
     private List<Producto> cacheProductosBase = new ArrayList<>();
 
+    // Stock original de cada producto (tal como está en la BD), para mostrar
+    // el stock disponible restando lo que ya está en el carrito.
+    private final Map<Integer, Float> stockOriginalPorProducto = new HashMap<>();
+
     private Producto productoSeleccionado;
     private boolean aceiteSeleccionadoEsGranel = false;
+    private String categoriaActiva = "ACEITES";
 
     @FXML
     public void initialize() {
         cargarCacheCompleto();
         configurarCarrito();
         configurarTablas();
+        configurarSeleccion();
+        configurarBusquedaGlobal();
         configurarEventos();
 
         // Configurar scroll
@@ -130,20 +140,54 @@ public class VentasController {
     private void cargarCacheCompleto() {
         try {
             cacheAceites = productoService.listarAceites();
-            System.out.println("DEBUG - Aceites: " + cacheAceites.size());
-
             cacheFiltros = productoService.listarFiltros();
-            System.out.println("DEBUG - Filtros: " + cacheFiltros.size());
-
             cacheFocos = productoService.listarFocos();
-            System.out.println("DEBUG - Focos: " + cacheFocos.size());
-
             cacheProductosBase = productoService.listarProductosBase();
-            System.out.println("DEBUG - Productos Base: " + cacheProductosBase.size());
         } catch (Exception e) {
             e.printStackTrace();
             mostrarError("Error al cargar datos: " + e.getMessage());
         }
+
+        // Registrar el stock real de la BD y reflejar lo que está en el carrito
+        registrarStockOriginal(cacheAceites);
+        registrarStockOriginal(cacheFiltros);
+        registrarStockOriginal(cacheFocos);
+        registrarStockOriginal(cacheProductosBase);
+        aplicarStockCarrito();
+    }
+
+    private void registrarStockOriginal(List<? extends Producto> lista) {
+        for (Producto p : lista) {
+            stockOriginalPorProducto.put(p.getId(), p.getStock());
+        }
+    }
+
+    private float cantidadEnCarrito(int idProducto) {
+        for (ItemVenta item : itemsCarrito) {
+            if (item.getIdProducto() == idProducto) {
+                return item.getCantidad();
+            }
+        }
+        return 0;
+    }
+
+    private float stockDisponible(int idProducto) {
+        Float original = stockOriginalPorProducto.get(idProducto);
+        float base = original != null ? original : 0;
+        return base - cantidadEnCarrito(idProducto);
+    }
+
+    // Actualiza el stock mostrado en las tablas restando lo que está en el carrito.
+    private void aplicarStockCarrito() {
+        for (Aceite a : cacheAceites) a.setStock(stockDisponible(a.getId()));
+        for (Filtro f : cacheFiltros) f.setStock(stockDisponible(f.getId()));
+        for (Foco f : cacheFocos) f.setStock(stockDisponible(f.getId()));
+        for (Producto p : cacheProductosBase) p.setStock(stockDisponible(p.getId()));
+
+        tablaAceites.refresh();
+        tablaFiltros.refresh();
+        tablaFocos.refresh();
+        tablaProductosBase.refresh();
     }
 
     private void configurarCarrito() {
@@ -196,6 +240,86 @@ public class VentasController {
         colProdStock.setCellValueFactory(new PropertyValueFactory<>("Stock"));
         colProdPrecio.setCellValueFactory(new PropertyValueFactory<>("Precio"));
         colProdDetalle.setCellValueFactory(new PropertyValueFactory<>("Detalle"));
+    }
+
+    // Listeners de selección registrados una sola vez
+    private void configurarSeleccion() {
+        tablaAceites.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                productoSeleccionado = newVal;
+                aceiteSeleccionadoEsGranel = newVal.isEsAgranel();
+                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
+                txtCantidad.setText(aceiteSeleccionadoEsGranel ? "0.25" : "1");
+                configurarBotonesCantidad();
+            }
+        });
+
+        tablaFiltros.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                productoSeleccionado = newVal;
+                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
+                txtCantidad.setText("1");
+                configurarBotonesCantidad();
+            }
+        });
+
+        tablaFocos.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                productoSeleccionado = newVal;
+                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
+                txtCantidad.setText("1");
+                configurarBotonesCantidad();
+            }
+        });
+
+        tablaProductosBase.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
+            if (newVal != null) {
+                productoSeleccionado = newVal;
+                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
+                txtCantidad.setText("1");
+                configurarBotonesCantidad();
+            }
+        });
+    }
+
+    // Listener de búsqueda único: filtra la tabla activa
+    private void configurarBusquedaGlobal() {
+        txtBuscar.textProperty().addListener((obs, old, newVal) -> aplicarFiltroBusqueda());
+    }
+
+    private void aplicarFiltroBusqueda() {
+        String filtro = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim().toLowerCase();
+
+        switch (categoriaActiva) {
+            case "ACEITES":
+                tablaAceites.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheAceites :
+                                cacheAceites.stream()
+                                        .filter(a -> a.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "FILTROS":
+                tablaFiltros.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheFiltros :
+                                cacheFiltros.stream()
+                                        .filter(f -> f.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "FOCOS":
+                tablaFocos.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheFocos :
+                                cacheFocos.stream()
+                                        .filter(f -> f.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "PRODUCTOS":
+                tablaProductosBase.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheProductosBase :
+                                cacheProductosBase.stream()
+                                        .filter(p -> p.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+        }
     }
 
     private void mostrarTabla(String tabla) {
@@ -273,129 +397,65 @@ public class VentasController {
     @FXML
     private void cargarAceites() {
         mostrarTabla("ACEITES");
+        categoriaActiva = "ACEITES";
 
         productoSeleccionado = null;
         lblProductoSeleccionado.setText("");
 
         cacheAceites = productoService.listarAceites();
-        tablaAceites.setItems(FXCollections.observableArrayList(cacheAceites));
 
-        // Configurar búsqueda
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaAceites.setItems(FXCollections.observableArrayList(cacheAceites));
-            } else {
-                List<Aceite> filtrados = cacheAceites.stream()
-                        .filter(a -> a.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaAceites.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
-
-        tablaAceites.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                aceiteSeleccionadoEsGranel = newVal.isEsAgranel();
-                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
-                txtCantidad.setText(aceiteSeleccionadoEsGranel ? "0.25" : "1");
-                configurarBotonesCantidad();
-            }
-        });
+        registrarStockOriginal(cacheAceites);
+        aplicarStockCarrito();
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
     }
-
-
 
     @FXML
     private void cargarFiltros() {
         mostrarTabla("FILTROS");
+        categoriaActiva = "FILTROS";
 
         productoSeleccionado = null;
         lblProductoSeleccionado.setText("");
 
         cacheFiltros = productoService.listarFiltros();
-        tablaFiltros.setItems(FXCollections.observableArrayList(cacheFiltros));
 
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaFiltros.setItems(FXCollections.observableArrayList(cacheFiltros));
-            } else {
-                List<Filtro> filtrados = cacheFiltros.stream()
-                        .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaFiltros.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
-
-        tablaFiltros.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
-                txtCantidad.setText("1");
-                configurarBotonesCantidad();
-            }
-        });
+        registrarStockOriginal(cacheFiltros);
+        aplicarStockCarrito();
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
     }
 
     @FXML
     private void cargarFocos() {
         mostrarTabla("FOCOS");
+        categoriaActiva = "FOCOS";
 
         productoSeleccionado = null;
         lblProductoSeleccionado.setText("");
 
         cacheFocos = productoService.listarFocos();
-        tablaFocos.setItems(FXCollections.observableArrayList(cacheFocos));
 
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaFocos.setItems(FXCollections.observableArrayList(cacheFocos));
-            } else {
-                List<Foco> filtrados = cacheFocos.stream()
-                        .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaFocos.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
-
-        tablaFocos.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
-                txtCantidad.setText("1");
-                configurarBotonesCantidad();
-            }
-        });
+        registrarStockOriginal(cacheFocos);
+        aplicarStockCarrito();
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
     }
 
     @FXML
     private void cargarProductos() {
         mostrarTabla("PRODUCTOS");
+        categoriaActiva = "PRODUCTOS";
 
         productoSeleccionado = null;
         lblProductoSeleccionado.setText("");
 
         cacheProductosBase = productoService.listarProductosBase();
-        tablaProductosBase.setItems(FXCollections.observableArrayList(cacheProductosBase));
 
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaProductosBase.setItems(FXCollections.observableArrayList(cacheProductosBase));
-            } else {
-                List<Producto> filtrados = cacheProductosBase.stream()
-                        .filter(p -> p.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaProductosBase.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
-
-        tablaProductosBase.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
-            if (newVal != null) {
-                productoSeleccionado = newVal;
-                lblProductoSeleccionado.setText("Seleccionado: " + newVal.getNombre() + " | Stock: " + newVal.getStock());
-                txtCantidad.setText("1");
-                configurarBotonesCantidad();
-            }
-        });
+        registrarStockOriginal(cacheProductosBase);
+        aplicarStockCarrito();
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
     }
 
     private void configurarEventos() {
@@ -420,13 +480,15 @@ public class VentasController {
             return;
         }
 
-        if (productoSeleccionado.getStock() < cantidad) {
-            mostrarAlerta("Stock insuficiente. Stock actual: " + productoSeleccionado.getStock());
+        int idProducto = productoSeleccionado.getId();
+        float disponible = stockDisponible(idProducto);
+
+        if (disponible < cantidad) {
+            mostrarAlerta("Stock insuficiente. Stock disponible: " + disponible);
             return;
         }
 
         float precio = productoSeleccionado.getPrecio();
-        int idProducto = productoSeleccionado.getId();
         String nombre = productoSeleccionado.getNombre();
 
         // OBTENER MARCA
@@ -435,9 +497,17 @@ public class VentasController {
 
         for (ItemVenta item : itemsCarrito) {
             if (item.getIdProducto() == idProducto) {
-                item.setCantidad(item.getCantidad() + cantidad);
+                float nuevaCantidad = item.getCantidad() + cantidad;
+                Float original = stockOriginalPorProducto.get(idProducto);
+                float stockTotal = original != null ? original : (disponible + item.getCantidad());
+                if (stockTotal < nuevaCantidad) {
+                    mostrarAlerta("Stock insuficiente. Stock disponible: " + (stockTotal - item.getCantidad()));
+                    return;
+                }
+                item.setCantidad(nuevaCantidad);
                 item.calcularSubtotal();
                 tblCarrito.refresh();
+                aplicarStockCarrito();
                 calcularTotal();
                 return;
             }
@@ -445,6 +515,7 @@ public class VentasController {
 
         ItemVenta nuevoItem = new ItemVenta(idProducto, nombre, marca, cantidad, precio);
         itemsCarrito.add(nuevoItem);
+        aplicarStockCarrito();
         calcularTotal();
     }
 
@@ -455,11 +526,13 @@ public class VentasController {
             return;
         }
         itemsCarrito.remove(seleccionado);
+        aplicarStockCarrito();
         calcularTotal();
     }
 
     private void limpiarCarrito() {
         itemsCarrito.clear();
+        aplicarStockCarrito();
         calcularTotal();
     }
 
@@ -534,8 +607,10 @@ public class VentasController {
         }
         venta.setDetalles(detalles);
 
+        boolean registrada = false;
         try {
             ventaService.registrarVenta(venta);
+            registrada = true;
 
             List<ItemVenta> copiaCarrito = new ArrayList<>(itemsCarrito);
 
@@ -544,6 +619,15 @@ public class VentasController {
 
         } catch (Exception e) {
             mostrarError("Error al registrar venta: " + e.getMessage());
+        } finally {
+            if (registrada) {
+                limpiarCarrito();
+                txtClienteNombre.clear();
+                txtClienteCelular.clear();
+                txtCantidad.setText("1");
+                cargarCacheCompleto();
+                cargarAceites();
+            }
         }
     }
 
@@ -558,17 +642,10 @@ public class VentasController {
 
         alert.getButtonTypes().setAll(btnSi, btnNo);
 
-        if (alert.showAndWait().get() == btnSi) {
+        Optional<ButtonType> respuesta = alert.showAndWait();
+        if (respuesta.isPresent() && respuesta.get() == btnSi) {
             generarRecibo(venta, itemsCarrito, nombreCliente);
         }
-
-        // Limpiar carrito después de la decisión del recibo
-        limpiarCarrito();
-        txtClienteNombre.clear();
-        txtClienteCelular.clear();
-        txtCantidad.setText("1");
-        cargarCacheCompleto();
-        cargarAceites();
     }
 
     private void generarRecibo(Venta venta, List<ItemVenta> items, String nombreCliente) {

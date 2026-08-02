@@ -104,7 +104,8 @@ public class ConfiguracionController {
         confirm.setHeaderText("¿Está seguro de eliminar este usuario?");
         confirm.setContentText("Usuario: " + seleccionado.getNombreUsuario() + "\nRol: " + seleccionado.getRol());
 
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        var respuesta = confirm.showAndWait();
+        if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
             try {
                 // Desactivar en lugar de eliminar
                 seleccionado.setActivo(false);

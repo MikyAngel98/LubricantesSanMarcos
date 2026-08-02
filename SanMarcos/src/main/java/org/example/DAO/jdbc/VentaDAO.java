@@ -13,7 +13,6 @@ import java.util.Optional;
 public class VentaDAO {
 
     private final Conexion conexion = Conexion.getInstancia();
-    private final ProductoDAO productoDAO = new ProductoDAO();
 
     // ==================== CREATE ====================
 
@@ -184,7 +183,7 @@ public class VentaDAO {
 
             // Restaurar stock
             for (DetalleVenta detalle : detalles) {
-                productoDAO.actualizarStock(detalle.getIdProducto(), detalle.getCantidad());
+                actualizarStockEnTransaccion(conn, detalle.getIdProducto(), detalle.getCantidad());
             }
 
             // Eliminar venta
@@ -202,7 +201,10 @@ public class VentaDAO {
             try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
             return false;
         } finally {
-            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException e) {}
+                conexion.closeConnection(conn);
+            }
         }
     }
 

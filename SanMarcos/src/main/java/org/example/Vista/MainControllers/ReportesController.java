@@ -78,7 +78,21 @@ public class ReportesController {
     @FXML
     public void initialize() {
         configurarColumnas();
+        configurarListenersSeleccion();
         abrirReporteVentas();
+    }
+
+    private void configurarListenersSeleccion() {
+        tablaVentas.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected != null) {
+                idSeleccionado = selected.getId();
+            }
+        });
+        tablaCompras.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected != null) {
+                idSeleccionado = selected.getId();
+            }
+        });
     }
 
     private void configurarColumnas() {
@@ -295,12 +309,6 @@ public class ReportesController {
         }
         var lista = reporteService.obtenerReporteVentas(inicio, fin);
         tablaVentas.setItems(FXCollections.observableArrayList(lista));
-
-        tablaVentas.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
-            if (selected != null) {
-                idSeleccionado = selected.getId();
-            }
-        });
     }
 
     private void cargarCompras(LocalDate inicio, LocalDate fin) {
@@ -310,12 +318,6 @@ public class ReportesController {
         }
         var lista = reporteService.obtenerHistorialCompras(inicio, fin);
         tablaCompras.setItems(FXCollections.observableArrayList(lista));
-
-        tablaCompras.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
-            if (selected != null) {
-                idSeleccionado = selected.getId();
-            }
-        });
     }
 
     private void cargarMasVendidos(LocalDate inicio, LocalDate fin, int top) {
@@ -330,6 +332,12 @@ public class ReportesController {
     private void cargarBajoStock(float stockMinimo) {
         var lista = reporteService.obtenerProductosBajoStock(stockMinimo);
         tablaBajoStock.setItems(FXCollections.observableArrayList(lista));
+    }
+
+    private String periodoSugerido() {
+        LocalDate ini = fechaInicioActual != null ? fechaInicioActual : LocalDate.now().minusDays(30);
+        LocalDate fin = fechaFinActual != null ? fechaFinActual : LocalDate.now();
+        return ini + "_a_" + fin;
     }
 
     // ==================== ACCIONES ====================
@@ -385,15 +393,16 @@ public class ReportesController {
 
         // Generar nombre sugerido según el reporte
         String nombreSugerido = "";
+        String periodo = periodoSugerido();
         switch (reporteActual) {
             case "VENTAS":
-                nombreSugerido = "reporte_ventas_" + fechaInicioActual + "_a_" + fechaFinActual + ".pdf";
+                nombreSugerido = "reporte_ventas_" + periodo + ".pdf";
                 break;
             case "COMPRAS":
-                nombreSugerido = "reporte_compras_" + fechaInicioActual + "_a_" + fechaFinActual + ".pdf";
+                nombreSugerido = "reporte_compras_" + periodo + ".pdf";
                 break;
             case "MAS_VENDIDOS":
-                nombreSugerido = "productos_mas_vendidos_" + fechaInicioActual + "_a_" + fechaFinActual + ".pdf";
+                nombreSugerido = "productos_mas_vendidos_" + periodo + ".pdf";
                 break;
             case "BAJO_STOCK":
                 nombreSugerido = "productos_bajo_stock_" + LocalDate.now() + ".pdf";

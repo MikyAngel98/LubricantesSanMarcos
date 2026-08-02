@@ -13,7 +13,6 @@ import java.util.Optional;
 public class CompraDAO {
 
     private final Conexion conexion = Conexion.getInstancia();
-    private final ProductoDAO productoDAO = new ProductoDAO();
 
     // ==================== CREATE ====================
 
@@ -38,7 +37,7 @@ public class CompraDAO {
                 insertarDetalleCompra(conn, detalle);
 
                 // Actualizar stock (aumentar)
-                productoDAO.actualizarStock(detalle.getIdProducto(), detalle.getCantidad());
+                actualizarStockEnTransaccion(conn, detalle.getIdProducto(), detalle.getCantidad());
 
                 total += detalle.getCantidad() * detalle.getPrecioCompra();
             }
@@ -55,7 +54,10 @@ public class CompraDAO {
             try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
             return false;
         } finally {
-            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException e) {}
+                conexion.closeConnection(conn);
+            }
         }
     }
 
@@ -189,7 +191,7 @@ public class CompraDAO {
 
             // Restaurar stock (restar lo que se había sumado)
             for (DetalleCompra detalle : detalles) {
-                productoDAO.actualizarStock(detalle.getIdProducto(), -detalle.getCantidad());
+                actualizarStockEnTransaccion(conn, detalle.getIdProducto(), -detalle.getCantidad());
             }
 
             // Eliminar compra
@@ -207,11 +209,23 @@ public class CompraDAO {
             try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
             return false;
         } finally {
-            try { if (conn != null) conn.setAutoCommit(true); } catch (SQLException e) {}
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException e) {}
+                conexion.closeConnection(conn);
+            }
         }
     }
 
     // ==================== MÉTODOS PRIVADOS ====================
+
+    private void actualizarStockEnTransaccion(Connection conn, int idProducto, float cantidad) throws SQLException {
+        String sql = "UPDATE Producto SET Stock = Stock + ? WHERE Id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setFloat(1, cantidad);
+            pstmt.setInt(2, idProducto);
+            pstmt.executeUpdate();
+        }
+    }
 
     private int insertarCompra(Connection conn, Compra compra) throws SQLException {
         String sql = "INSERT INTO Compra (Fecha, Total, IdProveedor) VALUES (?, ?, ?)";

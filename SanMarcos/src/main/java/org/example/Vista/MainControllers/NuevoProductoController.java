@@ -65,6 +65,9 @@ public class NuevoProductoController {
         rbFiltro.setDisable(true);
         rbFoco.setDisable(true);
 
+        // El stock no se puede editar manualmente (solo cambia con compras/ventas)
+        txtStock.setDisable(true);
+
         cargarDatosProducto();
     }
     public void setPreseleccionarFoco() {
@@ -75,6 +78,7 @@ public class NuevoProductoController {
         rbAceite.setDisable(false);
         rbFiltro.setDisable(false);
         rbFoco.setDisable(false);
+        txtStock.setDisable(false);
         setCamposFoco();
     }
 
@@ -82,6 +86,7 @@ public class NuevoProductoController {
         this.esEdicion = false;
         this.productoEditando = null;
         rbAceite.setSelected(true);
+        txtStock.setDisable(false);
         setCamposAceite();
     }
 
@@ -89,6 +94,7 @@ public class NuevoProductoController {
         this.esEdicion = false;
         this.productoEditando = null;
         rbFiltro.setSelected(true);
+        txtStock.setDisable(false);
         setCamposFiltro();
     }
 
@@ -297,7 +303,7 @@ public class NuevoProductoController {
 
     private void actualizarProductoBase() {
         productoEditando.setNombre(txtNombre.getText().trim());
-        productoEditando.setPrecio(Float.parseFloat(txtPrecio.getText().trim()));
+        productoEditando.setPrecio(parsearNumero(txtPrecio.getText()));
         productoEditando.setDetalle(txtDetalle.getText().trim());
         productoEditando.setIdMarca(obtenerMarcaSeleccionada().getId());
         // El stock NO se actualiza aquí (solo con compras/ventas)
@@ -385,8 +391,8 @@ public class NuevoProductoController {
 
     private void llenarProductoBase(Producto p) {
         p.setNombre(txtNombre.getText().trim());
-        p.setPrecio(Float.parseFloat(txtPrecio.getText().trim()));
-        p.setStock(Float.parseFloat(txtStock.getText().trim()));
+        p.setPrecio(parsearNumero(txtPrecio.getText()));
+        p.setStock(parsearNumero(txtStock.getText()));
         p.setDetalle(txtDetalle.getText().trim());
 
         Marca marca = obtenerMarcaSeleccionada();
@@ -407,7 +413,35 @@ public class NuevoProductoController {
     private boolean validarCamposComunes() {
         if (txtNombre.getText().trim().isEmpty()) { mostrarAlerta("El nombre es obligatorio"); return false; }
         if (cbMarca.getValue() == null) { mostrarAlerta("Seleccione una marca"); return false; }
+        if (!esNumeroMayorACero(txtPrecio.getText())) { mostrarAlerta("El precio debe ser un número válido mayor a 0"); return false; }
+        if (!esEdicion && !esNumeroNoNegativo(txtStock.getText())) {
+            mostrarAlerta("El stock debe ser un número válido mayor o igual a 0");
+            return false;
+        }
         return true;
+    }
+
+    // Acepta coma o punto como separador decimal
+    private float parsearNumero(String texto) {
+        return Float.parseFloat(texto.trim().replace(",", "."));
+    }
+
+    private boolean esNumeroMayorACero(String texto) {
+        if (texto == null || texto.trim().isEmpty()) return false;
+        try {
+            return parsearNumero(texto) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean esNumeroNoNegativo(String texto) {
+        if (texto == null || texto.trim().isEmpty()) return false;
+        try {
+            return parsearNumero(texto) >= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private void validarCamposAceite() {
@@ -444,6 +478,7 @@ public class NuevoProductoController {
         rbAgranelNo.setSelected(true);
 
         setCamposProductoBase();
+        txtStock.setDisable(false);
         txtNombre.requestFocus();
 
         esEdicion = false;
@@ -456,19 +491,20 @@ public class NuevoProductoController {
     }
 
     private void cerrarPanel() {
-        // Obtener el StackPane central y limpiarlo
-        try {
-            StackPane panelCentral = (StackPane) txtNombre.getScene().lookup("#panelCentral");
-            if (panelCentral != null) {
-                panelCentral.getChildren().clear();
-                // Mostrar mensaje de bienvenida
-                Label bienvenida = new Label("Seleccione una opción del menú lateral");
-                bienvenida.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
-                panelCentral.getChildren().add(bienvenida);
-            }
-        } catch (Exception e) {
-            // Si falla, intentar cerrar la ventana como antes
-            Stage stage = (Stage) txtNombre.getScene().getWindow();
+        // Si el formulario está embebido en el panel central, limpiarlo
+        StackPane panelCentral = (StackPane) txtNombre.getScene().lookup("#panelCentral");
+        if (panelCentral != null) {
+            panelCentral.getChildren().clear();
+            // Mostrar mensaje de bienvenida
+            Label bienvenida = new Label("Seleccione una opción del menú lateral");
+            bienvenida.setStyle("-fx-font-size: 16px; -fx-text-fill: #7f8c8d;");
+            panelCentral.getChildren().add(bienvenida);
+            return;
+        }
+
+        // Si es una ventana modal, cerrarla
+        Stage stage = (Stage) txtNombre.getScene().getWindow();
+        if (stage != null) {
             stage.close();
         }
     }

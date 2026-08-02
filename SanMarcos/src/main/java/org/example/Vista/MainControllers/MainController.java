@@ -89,7 +89,12 @@ public class MainController {
     @FXML
     private void abrirLogin() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoginView.fxml"));
+            var resource = getClass().getResource("/fxml/LoginView.fxml");
+            if (resource == null) {
+                mostrarMensajeTemporal("No se encontró el archivo LoginView.fxml");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Scene scene = new Scene(loader.load());
 
             LoginController loginController = loader.getController();
@@ -113,6 +118,9 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
             mostrarMensajeTemporal("Error al abrir login");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            mostrarMensajeTemporal("No se encontró el archivo LoginView.fxml");
         }
     }
 
@@ -120,7 +128,14 @@ public class MainController {
     private void cerrarSesion() {
         SessionManager.getInstance().cerrarSesion();
         actualizarEstadoSesion();
+        limpiarPanelCentral();
         mostrarMensajeSesionCerrada();
+    }
+
+    private void limpiarPanelCentral() {
+        if (panelCentral != null) {
+            panelCentral.getChildren().clear();
+        }
     }
 
     // ==================== ESTADO DE SESIÓN ====================
@@ -257,7 +272,12 @@ public class MainController {
 
     private void cargarPanel(String fxmlPath) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            var resource = getClass().getResource(fxmlPath);
+            if (resource == null) {
+                mostrarMensajeTemporal("❌ No se encontró la vista: " + fxmlPath);
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(resource);
             Node panel = loader.load();
             panelCentral.getChildren().setAll(panel);
         } catch (IOException e) {

@@ -8,11 +8,10 @@ CREATE TABLE Usuario (
     FechaCreacion DATETIME DEFAULT GETDATE()
 );
 
--- Insertar usuario ADMIN (contraseña: admin123)
--- La contraseña se encriptará con BCrypt desde la aplicación
+-- Insertar usuario ADMIN (contraseÃ±a: admin123)
 INSERT INTO Usuario (NombreUsuario, Contrasenia, NombreCompleto, Rol)
-VALUES ('Lescano', '$2a$10$7jQpZqX3XqX3XqX3XqX3Xu', 'Jose Luis Lescano', 'ADMIN');
+VALUES ('Lescano', '$2a$10$CWxhw0r9bstAeM4vgda54eJck4wLOrJGab3RZ3c7RiclZbYFRs3Ty', 'Jose Luis Lescano', 'ADMIN');
 
--- Insertar usuario VENDEDOR (contraseña: ventas123)
+-- Insertar usuario VENDEDOR (contraseÃ±a: ventas123)
 INSERT INTO Usuario (NombreUsuario, Contrasenia, NombreCompleto, Rol)
-VALUES ('Ema', '$2a$10$8kRpZrY4YrY4YrY4YrY4Yu', 'Emanuel', 'VENDEDOR');
+VALUES ('Ema', '$2a$10$X6F7k.68Bk9tB5P4dR7W/OgL35/0Mg..lUD5yKYansw94B7aRh7EC', 'Emanuel', 'VENDEDOR');

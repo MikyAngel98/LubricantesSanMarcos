@@ -373,19 +373,43 @@ public class ProductoDAO {
     // ==================== DELETE ====================
 
     public boolean eliminar(int id) {
-        eliminarDeTablasEspecificas(id);
+        Connection conn = null;
+        try {
+            conn = conexion.getConnection();
+            conn.setAutoCommit(false);
 
-        String sql = "DELETE FROM Producto WHERE Id = ?";
+            // Eliminar de tablas específicas (Aceite, Filtro, Foco)
+            String[] tablas = {"Aceite", "Filtro", "Foco"};
+            for (String tabla : tablas) {
+                String sql = "DELETE FROM " + tabla + " WHERE IdProducto = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, id);
+                    pstmt.executeUpdate();
+                }
+            }
 
-        try (Connection conn = conexion.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Eliminar producto
+            String sqlProducto = "DELETE FROM Producto WHERE Id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sqlProducto)) {
+                pstmt.setInt(1, id);
+                if (pstmt.executeUpdate() == 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
 
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
+            conn.commit();
+            return true;
 
         } catch (SQLException e) {
             System.err.println("Error al eliminar producto: " + e.getMessage());
+            try { if (conn != null) conn.rollback(); } catch (SQLException ex) {}
             return false;
+        } finally {
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException e) {}
+                conexion.closeConnection(conn);
+            }
         }
     }
 
@@ -412,22 +436,6 @@ public class ProductoDAO {
             }
         }
         return false;
-    }
-
-    private void eliminarDeTablasEspecificas(int idProducto) {
-        String[] tablas = {"Aceite", "Filtro", "Foco"};
-
-        try (Connection conn = conexion.getConnection()) {
-            for (String tabla : tablas) {
-                String sql = "DELETE FROM " + tabla + " WHERE IdProducto = ?";
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setInt(1, idProducto);
-                    pstmt.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al eliminar de tablas específicas: " + e.getMessage());
-        }
     }
 
     // ==================== UPDATE ====================

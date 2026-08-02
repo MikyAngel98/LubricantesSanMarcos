@@ -87,7 +87,15 @@ public class UsuarioFormController {
 
             } else {
                 // Editar usuario
-                if (!contrasenia.isEmpty() && !confirmar.isEmpty()) {
+                boolean llenoContrasenia = !contrasenia.isEmpty();
+                boolean llenoConfirmar = !confirmar.isEmpty();
+
+                if (llenoContrasenia != llenoConfirmar) {
+                    mostrarAlerta("Debe ingresar ambas contraseñas para cambiarla");
+                    return;
+                }
+
+                if (llenoContrasenia) {
                     if (!contrasenia.equals(confirmar)) {
                         mostrarAlerta("Las contraseñas no coinciden");
                         return;

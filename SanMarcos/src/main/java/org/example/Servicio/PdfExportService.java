@@ -389,7 +389,7 @@ public class PdfExportService {
         // Tabla de productos
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
-        table.setWidths(new float[]{3, 2, 1, 2, 2});
+        table.setWidths(new float[]{3, 2, 2, 2, 2});
 
         // Encabezados
         table.addCell(createHeaderCell("Producto"));

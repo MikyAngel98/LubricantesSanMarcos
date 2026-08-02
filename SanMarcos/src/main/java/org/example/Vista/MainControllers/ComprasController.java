@@ -112,12 +112,15 @@ public class ComprasController {
     private List<Producto> cacheProductosBase = new ArrayList<>();
 
     private Producto productoSeleccionado;
+    private String categoriaActiva = "ACEITES";
 
     @FXML
     public void initialize() {
         cargarCacheCompleto();
         configurarCarrito();
         configurarTablas();
+        configurarSeleccion();
+        configurarBusquedaGlobal();
         configurarEventos();
 
         scrollTablas.setFitToWidth(true);
@@ -133,12 +136,6 @@ public class ComprasController {
             cacheFiltros = productoService.listarFiltros();
             cacheFocos = productoService.listarFocos();
             cacheProductosBase = productoService.listarProductosBase();
-
-            System.out.println("=== DATOS CARGADOS COMPRAS ===");
-            System.out.println("Aceites: " + cacheAceites.size());
-            System.out.println("Filtros: " + cacheFiltros.size());
-            System.out.println("Focos: " + cacheFocos.size());
-            System.out.println("Productos Base: " + cacheProductosBase.size());
         } catch (Exception e) {
             e.printStackTrace();
             mostrarError("Error al cargar datos: " + e.getMessage());
@@ -237,26 +234,8 @@ public class ComprasController {
         }
     }
 
-    @FXML
-    private void cargarAceites() {
-        mostrarTabla("ACEITES");
-        productoSeleccionado = null;
-        lblProductoSeleccionado.setText("");
-
-        tablaAceites.setItems(FXCollections.observableArrayList(cacheAceites));
-
-        // Configurar búsqueda
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaAceites.setItems(FXCollections.observableArrayList(cacheAceites));
-            } else {
-                List<Aceite> filtrados = cacheAceites.stream()
-                        .filter(a -> a.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaAceites.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
-
+    // Listeners de selección registrados una sola vez
+    private void configurarSeleccion() {
         tablaAceites.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
             if (newVal != null) {
                 productoSeleccionado = newVal;
@@ -264,26 +243,6 @@ public class ComprasController {
                 txtCantidad.setText("1");
                 txtPrecioCompra.clear();
                 configurarBotonesCantidad();
-            }
-        });
-    }
-
-    @FXML
-    private void cargarFiltros() {
-        mostrarTabla("FILTROS");
-        productoSeleccionado = null;
-        lblProductoSeleccionado.setText("");
-
-        tablaFiltros.setItems(FXCollections.observableArrayList(cacheFiltros));
-
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaFiltros.setItems(FXCollections.observableArrayList(cacheFiltros));
-            } else {
-                List<Filtro> filtrados = cacheFiltros.stream()
-                        .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaFiltros.setItems(FXCollections.observableArrayList(filtrados));
             }
         });
 
@@ -296,26 +255,6 @@ public class ComprasController {
                 configurarBotonesCantidad();
             }
         });
-    }
-
-    @FXML
-    private void cargarFocos() {
-        mostrarTabla("FOCOS");
-        productoSeleccionado = null;
-        lblProductoSeleccionado.setText("");
-
-        tablaFocos.setItems(FXCollections.observableArrayList(cacheFocos));
-
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaFocos.setItems(FXCollections.observableArrayList(cacheFocos));
-            } else {
-                List<Foco> filtrados = cacheFocos.stream()
-                        .filter(f -> f.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaFocos.setItems(FXCollections.observableArrayList(filtrados));
-            }
-        });
 
         tablaFocos.getSelectionModel().selectedItemProperty().addListener((obs, old, newVal) -> {
             if (newVal != null) {
@@ -324,26 +263,6 @@ public class ComprasController {
                 txtCantidad.setText("1");
                 txtPrecioCompra.clear();
                 configurarBotonesCantidad();
-            }
-        });
-    }
-
-    @FXML
-    private void cargarProductos() {
-        mostrarTabla("PRODUCTOS");
-        productoSeleccionado = null;
-        lblProductoSeleccionado.setText("");
-
-        tablaProductosBase.setItems(FXCollections.observableArrayList(cacheProductosBase));
-
-        txtBuscar.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal == null || newVal.trim().isEmpty()) {
-                tablaProductosBase.setItems(FXCollections.observableArrayList(cacheProductosBase));
-            } else {
-                List<Producto> filtrados = cacheProductosBase.stream()
-                        .filter(p -> p.getNombre().toLowerCase().contains(newVal.toLowerCase()))
-                        .toList();
-                tablaProductosBase.setItems(FXCollections.observableArrayList(filtrados));
             }
         });
 
@@ -356,6 +275,86 @@ public class ComprasController {
                 configurarBotonesCantidad();
             }
         });
+    }
+
+    // Listener de búsqueda único: filtra la tabla activa
+    private void configurarBusquedaGlobal() {
+        txtBuscar.textProperty().addListener((obs, old, newVal) -> aplicarFiltroBusqueda());
+    }
+
+    private void aplicarFiltroBusqueda() {
+        String filtro = txtBuscar.getText() == null ? "" : txtBuscar.getText().trim().toLowerCase();
+
+        switch (categoriaActiva) {
+            case "ACEITES":
+                tablaAceites.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheAceites :
+                                cacheAceites.stream()
+                                        .filter(a -> a.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "FILTROS":
+                tablaFiltros.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheFiltros :
+                                cacheFiltros.stream()
+                                        .filter(f -> f.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "FOCOS":
+                tablaFocos.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheFocos :
+                                cacheFocos.stream()
+                                        .filter(f -> f.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+            case "PRODUCTOS":
+                tablaProductosBase.setItems(FXCollections.observableArrayList(
+                        filtro.isEmpty() ? cacheProductosBase :
+                                cacheProductosBase.stream()
+                                        .filter(p -> p.getNombre().toLowerCase().contains(filtro))
+                                        .toList()));
+                break;
+        }
+    }
+
+    @FXML
+    private void cargarAceites() {
+        mostrarTabla("ACEITES");
+        categoriaActiva = "ACEITES";
+        productoSeleccionado = null;
+        lblProductoSeleccionado.setText("");
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
+    }
+
+    @FXML
+    private void cargarFiltros() {
+        mostrarTabla("FILTROS");
+        categoriaActiva = "FILTROS";
+        productoSeleccionado = null;
+        lblProductoSeleccionado.setText("");
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
+    }
+
+    @FXML
+    private void cargarFocos() {
+        mostrarTabla("FOCOS");
+        categoriaActiva = "FOCOS";
+        productoSeleccionado = null;
+        lblProductoSeleccionado.setText("");
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
+    }
+
+    @FXML
+    private void cargarProductos() {
+        mostrarTabla("PRODUCTOS");
+        categoriaActiva = "PRODUCTOS";
+        productoSeleccionado = null;
+        lblProductoSeleccionado.setText("");
+        txtBuscar.clear();
+        aplicarFiltroBusqueda();
     }
 
     private void configurarBotonesCantidad() {

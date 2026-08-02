@@ -8,7 +8,7 @@ GO
 -- =====================================================
 -- 1. LIMPIAR DATOS EXISTENTES (OPCIONAL)
 -- =====================================================
--- Comenta estas líneas si NO quieres eliminar datos existentes
+-- Comenta estas lï¿½neas si NO quieres eliminar datos existentes
 
 DELETE FROM DetalleCompra;
 DELETE FROM DetalleVenta;
@@ -36,7 +36,7 @@ DBCC CHECKIDENT ('Proveedor', RESEED, 0);
 
 
 -- =====================================================
--- 2. CATEGORÍAS (5)
+-- 2. CATEGORï¿½AS (5)
 -- =====================================================
 INSERT INTO Categoria (Nombre) VALUES ('Aceites');
 INSERT INTO Categoria (Nombre) VALUES ('Filtros');
@@ -59,8 +59,8 @@ GO
 -- 4. PRESENTACIONES (5)
 -- =====================================================
 INSERT INTO Presentacion (Nombre, Litros) VALUES ('Botella', '1L');
-INSERT INTO Presentacion (Nombre, Litros) VALUES ('Galón', '4L');
-INSERT INTO Presentacion (Nombre, Litros) VALUES ('Bidón', '20L');
+INSERT INTO Presentacion (Nombre, Litros) VALUES ('Galï¿½n', '4L');
+INSERT INTO Presentacion (Nombre, Litros) VALUES ('Bidï¿½n', '20L');
 INSERT INTO Presentacion (Nombre, Litros) VALUES ('Tambor', '200L');
 INSERT INTO Presentacion (Nombre, Litros) VALUES ('Sobre', '1/4L');
 GO
@@ -78,7 +78,7 @@ VALUES ('20W-50', 'Mineral', 'Motor', 0, 1, SCOPE_IDENTITY());
 INSERT INTO Producto (Nombre, Precio, Stock, Detalle, IdCategoria, IdMarca) 
 VALUES ('Aceite 15W-40', 90.00, 80, 'Aceite para motor diesel', 1, 2);
 INSERT INTO Aceite (Viscosidad, TipoAceite, Uso, EsAgrenel, IdPresentacion, IdProducto)
-VALUES ('15W-40', 'Sintético', 'Diesel', 0, 1, SCOPE_IDENTITY());
+VALUES ('15W-40', 'Sintï¿½tico', 'Diesel', 0, 1, SCOPE_IDENTITY());
 
 -- Filtro de Aceite
 INSERT INTO Producto (Nombre, Precio, Stock, Detalle, IdCategoria, IdMarca) 
@@ -92,9 +92,9 @@ VALUES ('Filtro de Aire', 45.00, 40, 'Filtro de aire para motor', 2, 3);
 INSERT INTO Filtro (Codigo, Rosca, Uso, IdProducto)
 VALUES ('FA-281', 'N/A', 'Aire', SCOPE_IDENTITY());
 
--- Foco Halógeno H4
+-- Foco Halï¿½geno H4
 INSERT INTO Producto (Nombre, Precio, Stock, Detalle, IdCategoria, IdMarca) 
-VALUES ('Foco Halógeno H4', 28.50, 60, 'Luz blanca 12V 60/55W', 3, 3);
+VALUES ('Foco Halï¿½geno H4', 28.50, 60, 'Luz blanca 12V 60/55W', 3, 3);
 INSERT INTO Foco (Codigo, IdProducto)
 VALUES ('H4-12V', SCOPE_IDENTITY());
 GO
@@ -174,7 +174,7 @@ GO
 -- 11. VENTAS (2 ventas con detalles)
 -- =====================================================
 -- Venta 1: Aceite 20W-50 y Filtro de Aire
-INSERT INTO Venta (Fecha, Total, IdCliente) VALUES (GETDATE(), 0, 1);
+INSERT INTO Venta (Fecha, Total, IdCliente, MetodoPago) VALUES (GETDATE(), 0, 1, 'EFECTIVO');
 DECLARE @IdVenta1 INT = SCOPE_IDENTITY();
 
 INSERT INTO DetalleVenta (Cantidad, PrecioVenta, IdProducto, IdVenta) VALUES (5, 95.00, 1, @IdVenta1);
@@ -190,7 +190,7 @@ UPDATE Producto SET Stock = Stock - 5 WHERE Id = 1;
 UPDATE Producto SET Stock = Stock - 3 WHERE Id = 4;
 
 -- Venta 2: Aceite 15W-40 y Foco
-INSERT INTO Venta (Fecha, Total, IdCliente) VALUES (GETDATE(), 0, 2);
+INSERT INTO Venta (Fecha, Total, IdCliente, MetodoPago) VALUES (GETDATE(), 0, 2, 'QR');
 DECLARE @IdVenta2 INT = SCOPE_IDENTITY();
 
 INSERT INTO DetalleVenta (Cantidad, PrecioVenta, IdProducto, IdVenta) VALUES (4, 105.00, 2, @IdVenta2);
@@ -209,9 +209,9 @@ GO
 -- =====================================================
 -- 12. VERIFICAR DATOS INSERTADOS
 -- =====================================================
-PRINT '=== VERIFICACIÓN DE DATOS ===';
+PRINT '=== VERIFICACIï¿½N DE DATOS ===';
 
-SELECT 'Categorías' as Tabla, COUNT(*) as Cantidad FROM Categoria;
+SELECT 'Categorï¿½as' as Tabla, COUNT(*) as Cantidad FROM Categoria;
 SELECT 'Marcas' as Tabla, COUNT(*) as Cantidad FROM Marca;
 SELECT 'Presentaciones' as Tabla, COUNT(*) as Cantidad FROM Presentacion;
 SELECT 'Productos' as Tabla, COUNT(*) as Cantidad FROM Producto;

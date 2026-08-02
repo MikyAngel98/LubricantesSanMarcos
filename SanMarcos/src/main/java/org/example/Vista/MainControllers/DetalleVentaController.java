@@ -77,7 +77,16 @@ public class DetalleVentaController {
 
     @FXML
     private void exportarPDF() {
+        String ruta = elegirUbicacion("detalle_venta_" + idVenta + ".pdf");
+        if (ruta == null) {
+            return; // Usuario canceló
+        }
+
         try {
+            if (infoVenta == null) {
+                mostrarError("No se pudo obtener la información de la venta");
+                return;
+            }
             pdfService.exportarDetalleVenta(
                     idVenta,
                     tablaProductos.getItems(),
@@ -85,7 +94,7 @@ public class DetalleVentaController {
                     infoVenta.getCliente(),
                     infoVenta.getMetodoPago(),
                     total,
-                    elegirUbicacion("detalle_venta_" + idVenta + ".pdf")  // ← Agregar FileChooser
+                    ruta
             );
             mostrarInfo("PDF exportado correctamente");
         } catch (Exception e) {
